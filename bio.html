@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Sono | MLaser - Artigianato Digitale</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Sfondo e Texture ugelli (Trasparenza 90%) */
+        body { 
+            background-color: #0f172a; 
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 10 L40 25 L40 40 L20 40 L20 25 Z M28 40 L32 40 L30 45 Z' fill='none' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            opacity: 0.1;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .brand-red { color: #ef4444; }
+        
+        /* Effetto hover sulle card */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="text-gray-100 font-sans leading-relaxed">
+
+    <nav class="flex justify-between items-center p-6 bg-[#1e293b]/90 backdrop-blur-md border-b border-blue-900/50 sticky top-0 z-50">
+        <div class="text-3xl font-black tracking-tighter cursor-pointer" onclick="window.location.href='index.html'">
+            <span class="brand-red">ML</span><span class="text-white">aser</span>
+        </div>
+        <ul class="flex space-x-6 font-medium">
+            <li><a href="index.html" class="hover:text-red-400 transition">Home</a></li>
+            
+            <li><a href="index.html#contatti" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition">Contattami</a></li>
+        </ul>
+    </nav>
+
+    <main class="max-w-5xl mx-auto py-16 px-6">
+        
+        <div class="text-center mb-16">
+            <h1 class="text-5xl font-extrabold mb-4">La Storia di <span class="brand-red">ML</span>aser</h1>
+            
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-12 items-start">
+            
+            <div class="space-y-6">
+                <div class="glass-card p-2 rounded-3xl shadow-2xl transform rotate-1">
+                    <img src="lab.jpg" 
+                         alt="Il laboratorio MLaser" 
+                         class="rounded-2xl w-full h-96 object-cover grayscale hover:grayscale-0 transition duration-500">
+                </div>
+                <div class="glass-card p-6 rounded-2xl">
+                    <h3 class="text-red-500 font-bold uppercase tracking-widest text-sm mb-2">Il mio setup</h3>
+                    <ul class="text-gray-400 space-y-2 text-sm font-mono">
+                        <li>> FDM: Bambu Lab A1 x2</li>
+                        <li>> LASER: Enjoywood CEL-E10 a diodo 10W</li>
+                        <li>> CAD: Thinkercad / Lightburn</li>
+			<li>> 3D: 3DS Max</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <h2 class="text-3xl font-bold text-white border-l-4 border-red-600 pl-4">Dalla Passione all'Officina</h2>
+                
+                <p class="text-lg text-gray-300">
+                    Ciao! Mi chiamo Mauro e sono l'anima creativa e tecnica dietro <span class="brand-red">ML</span>aser</h1>. Quello che vedi oggi non è nato come un business, ma come una sfida personale: esplorare i confini tra l'immaginazione digitale e l'oggetto fisico.
+                </p>
+
+                <p class="text-gray-400">
+                    Ho iniziato anni fa con una ormai eroica stampante 3D Creality CR10S, imparando a calibrare ogni suo singolo bullone. Da lì, la curiosità mi ha spinto verso l'incisione laser, scoprendo come un raggio di luce potesse trasformare un semplice pezzo di legno in un'oggetto unico.
+                </p>
+
+                <div class="bg-red-600/10 border border-red-600/20 p-6 rounded-2xl">
+                    <h4 class="text-red-400 font-bold mb-2">La mia missione:</h4>
+                    <p class="text-white italic">"Non produrre in serie, ma creare con anima. Ogni incisione e ogni layer devono raccontare una storia di precisione e cura."</p>
+                </div>
+
+                <p class="text-gray-400">
+                    Oggi, nel mio laboratorio hobbistico, aiuto amici e parenti (sopratutto le mie due figlie) a dare vita ai loro sogni. Che si tratti di un pezzo meccanico introvabile o di un regalo unico, metto la stessa cura millimetrica in ogni progetto.
+                
+
+    <footer class="mt-20 py-10 border-t border-white/5 text-center">
+        <p class="text-gray-600 text-sm">Creato con passione nel laboratorio <span class="brand-red font-bold">ML</span>aser Lab.</p>
+    </footer>
+
+</body>
+</html>
