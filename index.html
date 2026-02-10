@@ -13,7 +13,6 @@
             scroll-behavior: smooth;
             padding-bottom: 40px;
         }
-
         body::before {
             content: "";
             position: fixed;
@@ -24,9 +23,7 @@
             z-index: -1;
             pointer-events: none;
         }
-
         .brand-red { color: #ef4444; }
-
         /* Stile per il popup donazione uniformato */
         #donationModal { 
             display: none; 
@@ -47,19 +44,20 @@
 <body class="text-gray-100 font-sans leading-relaxed">
 
     <nav class="flex justify-between items-center p-4 bg-[#1e293b]/90 backdrop-blur-md border-b border-blue-900/50 sticky top-0 z-50">
-        <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='index.html'">
-            <img src="logo.svg" alt="Logo" class="h-6 w-auto" style="filter: brightness(0) invert(1);">
-            <div class="text-3xl font-black tracking-tighter">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+            <img src="logo.svg" alt="Logo" class="h-5 w-auto" style="filter: brightness(0) invert(1);">
+            <div class="text-2xl font-black tracking-tighter">
                 <span class="brand-red">ML</span><span class="text-white">aser</span>
             </div>
         </div>
         
-        <ul class="hidden md:flex space-x-8 font-medium">
-            <li><a href="index.html" class="hover:text-red-400 transition text-white font-bold underline underline-offset-4 decoration-red-600">Home</a></li>
-            <li><a href="bio.html" class="text-gray-300 hover:text-red-400 transition uppercase text-sm tracking-wider">Chi Sono</a></li>
-        </ul>
-
-       </nav>
+        <div class="flex items-center gap-3 md:gap-6">
+            <a href="stampa3d.html" class="text-gray-400 hover:text-white transition text-[11px] md:text-sm font-bold uppercase tracking-tighter">3D</a>
+            <a href="laser.html" class="text-gray-400 hover:text-white transition text-[11px] md:text-sm font-bold uppercase tracking-tighter">Laser</a>
+            <a href="bio.html" class="text-gray-400 hover:text-white transition text-[11px] md:text-sm font-bold uppercase tracking-tighter">Bio</a>
+            <button onclick="checkPassword()" class="text-[9px] md:text-[10px] text-red-600 border border-red-600/30 px-2 py-0.5 rounded hover:bg-red-600 hover:text-white transition uppercase font-black">Admin</button>
+        </div>
+    </nav>
 
     <header class="relative py-10 px-6 overflow-hidden">
         <div class="max-w-4xl mx-auto text-center relative z-10">
@@ -111,7 +109,15 @@
             document.getElementById('donationModal').classList.remove('active');
         }
 
-        // Chiude il modal cliccando fuori dal contenuto
+        function checkPassword() {
+            const pw = prompt("Inserisci password admin:");
+            if (pw === "tua_password") { // Cambia "tua_password" con la tua vera pass
+                window.location.href = "admin.html";
+            } else {
+                alert("Accesso negato");
+            }
+        }
+
         window.onclick = function(event) {
             let modal = document.getElementById('donationModal');
             if (event.target == modal) {
@@ -119,12 +125,5 @@
             }
         }
     </script>
-
 </body>
-
 </html>
-
-
-
-
-
