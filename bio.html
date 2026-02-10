@@ -15,23 +15,21 @@
         }
         .brand-red { color: #ef4444; }
         .glass-card { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        #loginModal { display: none; position: fixed; inset: 0; z-index: 100; align-items: center; justify-content: center; padding: 20px; }
-        .active { display: flex !important; background: rgba(0,0,0,0.95); backdrop-filter: blur(4px); }
     </style>
 </head>
 <body class="text-gray-100 font-sans leading-relaxed">
 
     <nav class="flex justify-between items-center p-4 bg-[#1e293b]/90 backdrop-blur-md border-b border-white/5 sticky top-0 z-50">
-        <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='index.html'">
+
+        
             <img src="logo.svg" alt="Logo" class="h-6 w-auto" style="filter: brightness(0) invert(1);">
             <div class="text-3xl font-black tracking-tighter">
                 <span class="brand-red">ML</span><span class="text-white">aser</span>
             </div>
         </div>
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-6">
             <a href="stampa3d.html" class="text-gray-400 hover:text-white transition text-xs font-bold uppercase tracking-widest hidden md:block">Stampa 3D</a>
             <a href="laser.html" class="text-gray-400 hover:text-white transition text-xs font-bold uppercase tracking-widest hidden md:block">Incisione Laser</a>
-            <button onclick="openLogin()" class="text-[10px] text-red-500 border border-red-500/20 px-2 py-1 rounded hover:bg-red-500 hover:text-white transition uppercase font-bold">Admin</button>
             <a class='text-gray-400 hover:text-white transition text-sm font-medium uppercase tracking-tighter' href='index.html'>← Home</a>
         </div>
     </nav>
@@ -49,10 +47,10 @@
                 <div class="glass-card p-6 rounded-2xl border border-red-500/20">
                     <h3 class="text-red-500 font-bold uppercase tracking-widest text-xs mb-3 italic">Il mio setup</h3>
                     <ul class="text-gray-400 space-y-2 text-sm font-mono">
-                        <li>> FDM: Bambu Lab A1 x2</li>
-                        <li>> LASER: Enjoywood CEL-E10 a diodo 10W</li>
-                        <li>> CAD: Tinkercad / Lightburn</li>
-                        <li>> 3D: 3DS Max</li>
+                        <li>> FDM: nr.2 Bambu Lab A1 Combo</li>
+                        <li>> LASER a diodo: Enjoywood CEL-E10 da 10W</li>
+                        <li>> Software CAD: Tinkercad / Lightburn</li>
+                        <li>> Software  3D: 3DS Max / Thinkercad / Meshmixer</li>
                     </ul>
                 </div>
             </div>
@@ -70,47 +68,15 @@
                     <p class="text-white italic">"Non produrre in serie, ma creare con anima. Ogni incisione e ogni layer devono raccontare una storia di precisione e cura."</p>
                 </div>
                 <p class="text-gray-400 italic">
-                    Oggi, nel mio laboratorio hobbistico, aiuto amici e parenti (sopratutto le mie due figlie) a dare vita ai loro sogni. Che si tratti di un pezzo meccanico introvabile o di un regalo unico, metto la stessa cura millimetrica in ogni progetto.
+                    Oggi, nel mio laboratorio hobbistico, aiuto amici e parenti (soprattutto le mie due figlie) a dare vita ai loro sogni. Che si tratti di un pezzo meccanico introvabile o di un regalo unico, metto la stessa cura millimetrica in ogni progetto.
                 </p>
             </div>
         </div>
     </main>
 
-    <div id="loginModal">
-        <div class="bg-[#1e293b] p-8 rounded-3xl border border-white/10 shadow-2xl max-w-sm w-full text-center">
-            <h3 class="font-black uppercase italic mb-4 text-red-500">Accesso Admin</h3>
-            <input type="password" id="adminPass" placeholder="Password" class="w-full bg-[#0f172a] p-3 rounded-xl border border-white/10 mb-4 text-white text-center outline-none focus:border-red-500">
-            <div class="flex gap-2">
-                <button onclick="submitLogin()" class="flex-1 bg-red-600 p-3 rounded-xl font-bold uppercase text-white hover:bg-red-500 transition">Entra</button>
-                <button onclick="closeLogin()" class="flex-1 bg-gray-700 p-3 rounded-xl font-bold uppercase text-white hover:bg-gray-600 transition">Annulla</button>
-            </div>
-        </div>
-    </div>
-
     <footer class="mt-20 py-10 border-t border-white/5 text-center">
         <p class="text-gray-600 text-[10px] uppercase tracking-widest">Creato con passione nel laboratorio <span class="brand-red font-bold">ML</span>aser Lab.</p>
     </footer>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { firebaseConfig } from './firebase-config.js';
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-        window.openLogin = () => document.getElementById('loginModal').classList.add('active');
-        window.closeLogin = () => document.getElementById('loginModal').classList.remove('active');
-        
-        window.submitLogin = () => {
-            const pass = document.getElementById('adminPass').value;
-            signInWithEmailAndPassword(auth, "cippiboy@gmail.com", pass)
-                .then(() => {
-                    alert("Accesso Admin riuscito!");
-                    closeLogin();
-                })
-                .catch(() => alert("Password Errata"));
-        };
-    </script>
 </body>
 </html>
