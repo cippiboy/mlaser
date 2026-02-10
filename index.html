@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -14,7 +13,6 @@
             scroll-behavior: smooth;
             padding-bottom: 40px;
         }
-
         body::before {
             content: "";
             position: fixed;
@@ -25,10 +23,7 @@
             z-index: -1;
             pointer-events: none;
         }
-
         .brand-red { color: #ef4444; }
-
-        /* Stile per il popup donazione uniformato */
         #donationModal { 
             display: none; 
             position: fixed; 
@@ -55,12 +50,12 @@
             </div>
         </div>
         
-        <ul class="hidden md:flex space-x-8 font-medium">
-            <li><a href="index.html" class="hover:text-red-400 transition text-white font-bold underline underline-offset-4 decoration-red-600">Home</a></li>
-            <li><a href="bio.html" class="text-gray-300 hover:text-red-400 transition uppercase text-sm tracking-wider">Chi Sono</a></li>
-        </ul>
-
-       </nav>
+        <div class="flex items-center gap-4 md:gap-8 font-bold uppercase text-[12px] md:text-sm tracking-tighter">
+            <a href="stampa3d.html" class="text-gray-400 hover:text-white transition">3D</a>
+            <a href="laser.html" class="text-gray-400 hover:text-white transition">Laser</a>
+            <a href="bio.html" class="text-gray-400 hover:text-white transition">Bio</a>
+        </div>
+    </nav>
 
     <header class="relative py-10 px-6 overflow-hidden">
         <div class="max-w-4xl mx-auto text-center relative z-10">
@@ -107,12 +102,9 @@
         function openDonation() {
             document.getElementById('donationModal').classList.add('active');
         }
-
         function closeDonation() {
             document.getElementById('donationModal').classList.remove('active');
         }
-
-        // Chiude il modal cliccando fuori dal contenuto
         window.onclick = function(event) {
             let modal = document.getElementById('donationModal');
             if (event.target == modal) {
@@ -120,7 +112,5 @@
             }
         }
     </script>
-
 </body>
-
 </html>
