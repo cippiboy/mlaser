@@ -24,25 +24,11 @@
             pointer-events: none;
         }
         .brand-red { color: #ef4444; }
-        #donationModal { 
-            display: none; 
-            position: fixed; 
-            inset: 0; 
-            z-index: 100; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 20px;
-        }
-        .active { 
-            display: flex !important; 
-            background: rgba(0,0,0,0.95); 
-            backdrop-filter: blur(4px); 
-        }
     </style>
 </head>
 <body class="text-gray-100 font-sans leading-relaxed">
 
-    <nav class="flex justify-between items-center p-4 bg-[#1e293b]/90 backdrop-blur-md border-b border-blue-900/50 sticky top-0 z-50">
+    <nav class="flex justify-between items-center p-4 bg-[#1e293b]/90 backdrop-blur-md border-b border-white/5 sticky top-0 z-50">
         <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='index.html'">
             <img src="logo.svg" alt="Logo" class="h-6 w-auto" style="filter: brightness(0) invert(1);">
             <div class="text-3xl font-black tracking-tighter">
@@ -64,9 +50,6 @@
             </h1>
             <p class="text-lg text-blue-100/70 leading-relaxed max-w-2xl mx-auto">
                 Laboratorio hobbistico di fabbricazioni digitali.
-            </p>
-            <p class="text-lg text-blue-100/70 leading-relaxed max-w-2xl mx-auto">
-                Trasforma le tue idee in realtà con <span class="font-bold text-white"><span class="brand-red">ML</span>aser</span>.
             </p>
         </div>
     </header>
@@ -98,19 +81,5 @@
         </div>
     </section>
 
-    <script>
-        function openDonation() {
-            document.getElementById('donationModal').classList.add('active');
-        }
-        function closeDonation() {
-            document.getElementById('donationModal').classList.remove('active');
-        }
-        window.onclick = function(event) {
-            let modal = document.getElementById('donationModal');
-            if (event.target == modal) {
-                closeDonation();
-            }
-        }
-    </script>
 </body>
 </html>
