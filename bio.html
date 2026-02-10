@@ -21,16 +21,18 @@
 <body class="text-gray-100 font-sans leading-relaxed">
 
     <nav class="flex justify-between items-center p-4 bg-[#1e293b]/90 backdrop-blur-md border-b border-white/5 sticky top-0 z-50">
-        <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='index.html'">
-            <img src="logo.svg" alt="Logo" class="h-6 w-auto" style="filter: brightness(0) invert(1);">
-            <div class="text-3xl font-black tracking-tighter">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+            <img src="logo.svg" alt="Logo" class="h-5 w-auto" style="filter: brightness(0) invert(1);">
+            <div class="text-2xl font-black tracking-tighter">
                 <span class="brand-red">ML</span><span class="text-white">aser</span>
             </div>
         </div>
-        <div class="flex items-center gap-6">
-            <a href="stampa3d.html" class="text-gray-400 hover:text-white transition text-xs font-bold uppercase tracking-widest hidden md:block">Stampa 3D</a>
-            <a href="laser.html" class="text-gray-400 hover:text-white transition text-xs font-bold uppercase tracking-widest hidden md:block">Incisione Laser</a>
-            <a class='text-gray-400 hover:text-white transition text-sm font-medium uppercase tracking-tighter' href='index.html'>← Home</a>
+        
+        <div class="flex items-center gap-3 md:gap-6">
+            <a href="stampa3d.html" class="text-gray-400 hover:text-white transition text-[11px] md:text-sm font-bold uppercase tracking-tighter">3D</a>
+            <a href="laser.html" class="text-gray-400 hover:text-white transition text-[11px] md:text-sm font-bold uppercase tracking-tighter">Laser</a>
+            <button onclick="window.location.href='index.html'" class="text-[9px] md:text-[10px] text-red-600 border border-red-600/30 px-2 py-0.5 rounded hover:bg-red-600 hover:text-white transition uppercase font-black">Admin</button>
+            <a href="index.html" class="text-gray-400 hover:text-white transition text-[11px] md:text-sm font-bold uppercase tracking-tighter">← Home</a>
         </div>
     </nav>
 
@@ -80,6 +82,3 @@
 
 </body>
 </html>
-
-
-
