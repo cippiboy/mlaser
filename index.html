@@ -1,86 +1,126 @@
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MLaser | Home</title>
+    <title>MLaser | Stampa 3D & Incisione Laser</title>
     <link rel="icon" type="image/svg+xml" href="favicon_ML.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #0f172a; position: relative; min-height: 100vh; }
-        body::before {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 10 L40 25 L40 40 L20 40 L20 25 Z M28 40 L32 40 L30 45 Z' fill='none' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E");
-            background-repeat: repeat; opacity: 0.1; z-index: -1; pointer-events: none;
+        body { 
+            background-color: #0f172a; 
+            position: relative;
+            scroll-behavior: smooth;
+            padding-bottom: 40px;
         }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 10 L40 25 L40 40 L20 40 L20 25 Z M28 40 L32 40 L30 45 Z' fill='none' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            opacity: 0.1;
+            z-index: -1;
+            pointer-events: none;
+        }
+
         .brand-red { color: #ef4444; }
-        .hero-gradient { background: radial-gradient(circle at center, rgba(239, 68, 68, 0.15) 0%, transparent 70%); }
+
+        /* Stile per il popup donazione uniformato */
+        #donationModal { 
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            z-index: 100; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px;
+        }
+        .active { 
+            display: flex !important; 
+            background: rgba(0,0,0,0.95); 
+            backdrop-filter: blur(4px); 
+        }
     </style>
 </head>
-<body class="text-gray-100 font-sans">
+<body class="text-gray-100 font-sans leading-relaxed">
 
-    <nav class="flex justify-between items-center p-4 bg-[#1e293b]/90 backdrop-blur-md border-b border-white/5 sticky top-0 z-50">
+    <nav class="flex justify-between items-center p-4 bg-[#1e293b]/90 backdrop-blur-md border-b border-blue-900/50 sticky top-0 z-50">
         <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='index.html'">
             <img src="logo.svg" alt="Logo" class="h-6 w-auto" style="filter: brightness(0) invert(1);">
             <div class="text-3xl font-black tracking-tighter">
                 <span class="brand-red">ML</span><span class="text-white">aser</span>
             </div>
         </div>
-        <div class="flex items-center gap-4 md:gap-8">
-            <a href="stampa3d.html" class="text-gray-400 hover:text-white transition text-[12px] md:text-sm font-bold uppercase tracking-widest">Stampa 3D</a>
-            <a href="laser.html" class="text-gray-400 hover:text-white transition text-[12px] md:text-sm font-bold uppercase tracking-widest">Laser</a>
-            <a href="bio.html" class="text-gray-400 hover:text-white transition text-[12px] md:text-sm font-bold uppercase tracking-widest">Bio</a>
-        </div>
-    </nav>
+        
+        <ul class="hidden md:flex space-x-8 font-medium">
+            <li><a href="index.html" class="hover:text-red-400 transition text-white font-bold underline underline-offset-4 decoration-red-600">Home</a></li>
+            <li><a href="bio.html" class="text-gray-300 hover:text-red-400 transition uppercase text-sm tracking-wider">Chi Sono</a></li>
+        </ul>
 
-    <header class="relative pt-24 pb-16 px-6 hero-gradient text-center">
-        <div class="max-w-4xl mx-auto">
-            <h1 class="text-6xl md:text-8xl font-black italic uppercase tracking-tighter mb-4">
-                Creative <span class="brand-red">Lab</span>
+       </nav>
+
+    <header class="relative py-10 px-6 overflow-hidden">
+        <div class="max-w-4xl mx-auto text-center relative z-10">
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-red-200 to-blue-300">
+                Precisione Laser.<br>Visione 3D.
             </h1>
-            <p class="text-gray-400 text-lg md:text-xl font-medium tracking-tight max-w-2xl mx-auto">
-                Dall'idea al prototipo: stampa 3D di precisione e incisioni laser su misura.
+            <p class="text-lg text-blue-100/70 leading-relaxed max-w-2xl mx-auto">
+                Laboratorio hobbistico di fabbricazioni digitali.
+            </p>
+            <p class="text-lg text-blue-100/70 leading-relaxed max-w-2xl mx-auto">
+                Trasforma le tue idee in realtà con <span class="font-bold text-white"><span class="brand-red">ML</span>aser</span>.
             </p>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-6 py-12 grid md:grid-cols-2 gap-10">
-        
-        <div onclick="window.location.href='stampa3d.html'" class="group relative bg-[#1e293b]/40 rounded-[2.5rem] border border-white/5 overflow-hidden cursor-pointer transition-all duration-500 hover:border-red-500/40 hover:-translate-y-2 shadow-2xl">
-            <div class="h-80 overflow-hidden">
-                <img src="3d-cover.jpg" alt="Stampa 3D" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0">
-            </div>
-            <div class="p-8">
-                <div class="flex justify-between items-end">
-                    <div>
-                        <span class="text-red-500 font-black uppercase text-xs tracking-widest">Galleria Progetti</span>
-                        <h2 class="text-4xl font-black italic uppercase tracking-tighter mt-1">Stampa <span class="brand-red">3D</span></h2>
-                    </div>
-                    <div class="text-4xl text-white group-hover:translate-x-2 transition duration-300">→</div>
-                </div>
-            </div>
+    <section id="servizi" class="pt-4 px-6 max-w-4xl mx-auto relative z-10">
+        <div class="text-center mb-10">
+            <h2 class="text-2xl font-bold mb-2 text-white italic tracking-tight uppercase">Le lavorazioni</h2>
+            <div class="h-1 w-16 bg-red-600 mx-auto rounded-full shadow-[0_0_10px_rgba(239,68,68,0.5)]"></div>
         </div>
 
-        <div onclick="window.location.href='laser.html'" class="group relative bg-[#1e293b]/40 rounded-[2.5rem] border border-white/5 overflow-hidden cursor-pointer transition-all duration-500 hover:border-red-500/40 hover:-translate-y-2 shadow-2xl">
-            <div class="h-80 overflow-hidden">
-                <img src="laser-cover.jpg" alt="Incisione Laser" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0">
-            </div>
-            <div class="p-8">
-                <div class="flex justify-between items-end">
-                    <div>
-                        <span class="text-red-500 font-black uppercase text-xs tracking-widest">Galleria Lavori</span>
-                        <h2 class="text-4xl font-black italic uppercase tracking-tighter mt-1">Laser <span class="brand-red">Gallery</span></h2>
-                    </div>
-                    <div class="text-4xl text-white group-hover:translate-x-2 transition duration-300">→</div>
+        <div class="grid md:grid-cols-2 gap-6">
+            <a href="stampa3d.html" class="group p-6 bg-[#1e293b]/80 backdrop-blur-md rounded-2xl border border-white/5 hover:border-red-500/50 transition-all shadow-xl block">
+                <div class="w-12 h-12 bg-red-600/20 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition text-red-500">🖨️</div>
+                <h3 class="text-xl font-bold mb-2 text-white uppercase italic">Stampa 3D</h3>
+                <p class="text-blue-100/60 text-sm mb-4">Prototipi funzionali, miniature e ricambi personalizzati in PLA, PETG.</p>
+                <div class="text-red-500 font-bold flex items-center group-hover:translate-x-2 transition-transform uppercase text-xs">
+                    VEDI GALLERIA <span class="ml-1">→</span>
                 </div>
-            </div>
+            </a>
+
+            <a href="laser.html" class="group p-6 bg-[#1e293b]/80 backdrop-blur-md rounded-2xl border border-white/5 hover:border-orange-500/50 transition-all shadow-xl block">
+                <div class="w-12 h-12 bg-orange-600/20 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition text-orange-500">⚡</div>
+                <h3 class="text-xl font-bold mb-2 text-white uppercase italic">Incisione Laser</h3>
+                <p class="text-blue-100/60 text-sm mb-4">Taglio e incisione su legno, ardesia e pelle per regali unici.</p>
+                <div class="text-orange-500 font-bold flex items-center group-hover:translate-x-2 transition-transform uppercase text-xs">
+                    VEDI GALLERIA <span class="ml-1">→</span>
+                </div>
+            </a>
         </div>
+    </section>
 
-    </main>
+    <script>
+        function openDonation() {
+            document.getElementById('donationModal').classList.add('active');
+        }
 
-    <footer class="mt-20 py-12 border-t border-white/5 text-center">
-        <p class="text-gray-600 text-[10px] uppercase tracking-[0.3em]">© 2024 MLaser Lab • Mauro Cipparone</p>
-    </footer>
+        function closeDonation() {
+            document.getElementById('donationModal').classList.remove('active');
+        }
+
+        // Chiude il modal cliccando fuori dal contenuto
+        window.onclick = function(event) {
+            let modal = document.getElementById('donationModal');
+            if (event.target == modal) {
+                closeDonation();
+            }
+        }
+    </script>
 
 </body>
+
 </html>
