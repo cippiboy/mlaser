@@ -13,249 +13,162 @@
             background-repeat: repeat; opacity: 0.1; z-index: -1; pointer-events: none;
         }
         .brand-red { color: #ef4444; }
-        #photoModal, #newsletterModal, #donationModal { 
-            display: none; position: fixed; inset: 0; z-index: 100; 
-            align-items: center; justify-content: center; padding: 20px; 
+        #photoModal, #loginModal { 
+            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); 
+            backdrop-blur: 10px; z-index: 100; align-items: center; justify-content: center; 
         }
-        .active { display: flex !important; background: rgba(0,0,0,0.95); backdrop-filter: blur(4px); }
-        .admin-only { display: none !important; }
-        .is-admin .admin-only { display: inline-block !important; }
-        
-        /* Modal Login Stile */
-        #loginModal { display: none; position: fixed; inset: 0; z-index: 200; align-items: center; justify-content: center; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); }
+        #photoModal.active, #loginModal.active { display: flex; }
+        .is-admin #adminPanel { display: block !important; }
+        .is-admin .admin-only { display: block !important; }
+        .admin-only { display: none; }
     </style>
 </head>
 <body class="text-gray-100 font-sans">
 
-    <nav class="flex justify-between items-center p-4 bg-[#1e293b]/90 backdrop-blur-md border-b border-white/5 sticky top-0 z-50">
-        <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='index.html'">
-            <img src="logo.svg" alt="Logo" class="h-6 w-auto" style="filter: brightness(0) invert(1);">
-            <div class="text-3xl font-black tracking-tighter">
-                <span class="brand-red">ML</span><span class="text-white">aser</span>
-            </div>
-        </div>
-        <div class="flex items-center gap-4">
-            <button onclick="openDonation()" class="hidden sm:flex items-center gap-2 text-yellow-500 border border-yellow-500/20 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-yellow-500/10 transition">☕ Offrimi un caffè</button>
-            <button onclick="openNewsletter()" class="bg-red-600 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-red-500 transition shadow-lg text-white font-bold">Iscriviti</button>
-            <button onclick="checkPassword()" class="text-[10px] text-gray-500 hover:text-red-500 transition uppercase tracking-widest font-bold">Admin</button>
-            <a href="index.html" class="text-gray-400 hover:text-white transition text-sm font-medium uppercase tracking-tighter">← Home</a>
-        </div>
-    </nav>
+    <header class="p-6 flex justify-between items-center max-w-7xl mx-auto">
+        <a href="index.html" class="text-2xl font-black tracking-tighter uppercase italic"><span class="brand-red">M</span>Laser</a>
+        <nav class="space-x-8 text-xs font-bold uppercase tracking-widest hidden md:flex">
+            <a href="laser.html" class="hover:text-red-500 transition">Incisione Laser</a>
+            <a href="bio.html" class="hover:text-red-500 transition">Chi Sono</a>
+            <button onclick="checkPassword()" class="text-red-500 border border-red-500/30 px-3 py-1 rounded hover:bg-red-500 hover:text-white transition">Admin</button>
+        </nav>
+    </header>
 
-    <div id="loginModal">
-        <div class="bg-[#1e293b] p-8 rounded-3xl border border-red-500/30 shadow-2xl max-w-sm w-full mx-4 text-center">
-            <h3 class="text-red-500 font-black uppercase italic tracking-tighter text-xl mb-4">Accesso Admin 3D</h3>
-            <input type="password" id="adminPassField" placeholder="Password" 
-                   class="w-full bg-[#0f172a] p-3 rounded-xl border border-white/10 outline-none focus:border-red-500 text-white mb-4">
-            <div class="flex gap-2">
-                <button onclick="submitLogin()" class="flex-1 bg-red-600 p-3 rounded-xl font-bold uppercase hover:bg-red-500 transition text-white">Entra</button>
-                <button onclick="closeLogin()" class="flex-1 bg-gray-700 p-3 rounded-xl font-bold uppercase hover:bg-gray-600 transition text-white">Annulla</button>
+    <main class="max-w-7xl mx-auto px-6 py-12">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+            <div>
+                <h2 class="text-6xl font-black uppercase italic tracking-tighter leading-none">Galleria <span class="brand-red">3D</span></h2>
+                <p class="text-gray-400 mt-4 max-w-md uppercase text-xs tracking-widest">Dal prototipo funzionale all'oggetto di design, layer dopo layer.</p>
             </div>
         </div>
-    </div>
 
-    <div id="adminPanel" class="max-w-4xl mx-auto mt-6 p-6 bg-[#1e293b]/80 backdrop-blur-md rounded-3xl border border-red-500/30 shadow-2xl" style="display: none;">
-        <div class="flex justify-between items-start mb-4">
-            <h2 class="text-red-500 font-black uppercase italic tracking-tighter text-xl">Nuovo Progetto 3D</h2>
-            <button onclick="adminLogout()" class="bg-gray-800 border border-red-500/50 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-600 transition text-white">
-                <i class="fas fa-sign-out-alt"></i> Esci Modalità Admin
-            </button>
-        </div>
-        
-        <div class="grid md:grid-cols-2 gap-6">
-            <div class="space-y-4">
-                <input type="text" id="postTitle" placeholder="Titolo" class="w-full bg-[#0f172a] p-3 rounded-xl border border-white/10 outline-none focus:border-red-500 text-white font-bold">
-                <textarea id="postDesc" placeholder="Descrizione..." class="w-full bg-[#0f172a] p-3 rounded-xl border border-white/10 h-24 text-white"></textarea>
-                <button id="publishBtn" onclick="addPost()" class="w-full bg-red-600 p-4 rounded-xl font-black uppercase italic tracking-widest hover:bg-red-500 transition shadow-lg text-white">Pubblica</button>
-            </div>
-            <div class="space-y-2">
-                <label class="block border-2 border-dashed border-white/10 rounded-2xl p-8 text-center cursor-pointer hover:border-red-500 bg-[#0f172a]/50">
-                    <span class="text-gray-400 text-[10px] font-bold uppercase tracking-tighter">Carica Foto</span>
-                    <input type="file" id="postFiles" multiple accept="image/*" class="hidden" onchange="previewImages()">
-                </label>
-                <div id="previewContainer" class="grid grid-cols-4 gap-2 mt-2"></div>
+        <div id="adminPanel" class="hidden mb-12 p-8 bg-red-600/10 border border-red-600/20 rounded-3xl">
+            <h3 class="text-xl font-bold mb-6 uppercase italic">Aggiungi Nuovo Progetto</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="text" id="workTitle" placeholder="Titolo Progetto" class="bg-[#0f172a] border border-white/10 p-4 rounded-xl focus:outline-none focus:border-red-500">
+                <input type="text" id="workImages" placeholder="URL Immagini (separate da virgola)" class="bg-[#0f172a] border border-white/10 p-4 rounded-xl focus:outline-none focus:border-red-500">
+                <textarea id="workDesc" placeholder="Descrizione del lavoro..." class="bg-[#0f172a] border border-white/10 p-4 rounded-xl md:col-span-2 h-32 focus:outline-none focus:border-red-500"></textarea>
+                <button onclick="addPost()" class="md:col-span-2 bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl transition uppercase tracking-widest">Pubblica Progetto</button>
+                <button onclick="signOutAdmin()" class="md:col-span-2 text-gray-500 text-xs mt-2 underline">Esci dalla sessione Admin</button>
             </div>
         </div>
-    </div>
 
-    <main class="max-w-6xl mx-auto py-12 px-6">
-        <h1 class="text-5xl font-black mb-10 italic uppercase tracking-tighter">Gallery <span class="brand-red">3D</span></h1>
-        <div id="gridContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+        <div id="galleryGrid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            </div>
     </main>
 
-    <div id="donationModal"><div class="bg-[#1e293b] p-10 rounded-[2.5rem] max-w-md w-full relative border border-white/10 text-center"><button onclick="closeDonation()" class="absolute top-6 right-6 text-2xl text-gray-500">×</button><h2 class="text-2xl font-black uppercase italic text-white">Supporta <span class="brand-red">MLaser</span></h2><a href="https://paypal.me/Mauretto1972/2" target="_blank" class="block w-full bg-yellow-500 mt-8 py-5 rounded-2xl font-black uppercase italic">Offrimi un caffè</a></div></div>
-    <div id="newsletterModal"><div class="bg-[#1e293b] p-10 rounded-[2.5rem] max-w-md w-full relative border border-white/10 text-center"><button onclick="closeNewsletter()" class="absolute top-6 right-6 text-2xl text-gray-500">×</button><h2 class="text-2xl font-black uppercase italic text-white mb-6">Newsletter</h2><form action="https://formspree.io/f/meeajzej" method="POST" class="space-y-4"><input type="email" name="Email" placeholder="EMAIL" required class="w-full bg-[#0f172a] p-4 rounded-2xl border border-white/10 text-white font-bold"><button type="submit" class="w-full bg-red-600 py-4 rounded-2xl font-black uppercase italic text-white">Iscrivimi</button></form></div></div>
-    
+    <div id="loginModal">
+        <div class="bg-[#1e293b] p-8 rounded-3xl border border-white/10 w-full max-w-sm">
+            <h3 class="text-xl font-bold mb-4 uppercase italic">Accesso Riservato</h3>
+            <input type="password" id="adminPassField" placeholder="Password" class="w-full bg-[#0f172a] border border-white/10 p-4 rounded-xl mb-4 text-white">
+            <div class="flex gap-2">
+                <button onclick="submitLogin()" class="flex-1 bg-red-600 py-3 rounded-xl font-bold uppercase text-xs">Entra</button>
+                <button onclick="closeLogin()" class="flex-1 bg-white/10 py-3 rounded-xl font-bold uppercase text-xs">Annulla</button>
+            </div>
+        </div>
+    </div>
+
     <div id="photoModal">
-        <button onclick="closePhoto()" class="absolute top-6 right-6 text-white text-5xl">×</button>
-        <div class="max-w-5xl w-full flex flex-col items-center">
-            <div class="relative w-full flex items-center justify-center">
-                <button onclick="changeImg(-1)" class="absolute left-0 text-6xl p-4 text-white/50 hover:text-white">‹</button>
+        <button onclick="closePhoto()" class="absolute top-6 right-6 text-white text-5xl z-50">×</button>
+        <div class="max-w-5xl w-full p-4 flex flex-col items-center">
+            <div class="relative group w-full flex justify-center items-center">
+                <button onclick="changeImg(-1)" class="absolute left-0 bg-black/50 p-4 text-white hover:bg-red-600 transition">❮</button>
                 <img id="modalImg" src="" class="max-h-[70vh] rounded-2xl shadow-2xl object-contain border border-white/10">
-                <button onclick="changeImg(1)" class="absolute right-0 text-6xl p-4 text-white/50 hover:text-white">›</button>
+                <button onclick="changeImg(1)" class="absolute right-0 bg-black/50 p-4 text-white hover:bg-red-600 transition">❯</button>
             </div>
             <div class="text-center mt-6">
-                <p id="imgCounter" class="text-red-500 text-[10px] font-black uppercase mb-2"></p>
+                <p id="imgCounter" class="text-red-500 font-bold text-xs tracking-tighter mb-2"></p>
                 <h3 id="modalTitle" class="text-3xl font-black text-white uppercase italic tracking-tighter"></h3>
-                <p id="modalDesc" class="text-gray-400 text-sm mt-3"></p>
-                <div class="mt-6 flex gap-4 justify-center">
-                    <button class="admin-only bg-red-900/40 border border-red-500/20 px-6 py-2 rounded-full text-[10px] font-bold uppercase text-white" onclick="deleteFullWork()">Elimina Progetto</button>
-                    <button class="admin-only bg-gray-800 border border-white/10 px-6 py-2 rounded-full text-[10px] font-bold uppercase text-white" onclick="deleteSingleImage()">Elimina Foto</button>
+                <p id="modalDesc" class="text-gray-400 text-sm mt-3 max-w-2xl"></p>
+                <div class="admin-only mt-6 space-x-4">
+                    <button onclick="deleteSingleImage()" class="bg-orange-600/20 text-orange-500 px-4 py-2 rounded-lg text-xs font-bold border border-orange-500/20">Elimina questa foto</button>
+                    <button onclick="deleteFullWork()" class="bg-red-600/20 text-red-500 px-4 py-2 rounded-lg text-xs font-bold border border-red-500/20">Elimina intero progetto</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
     <script type="module">
-        import { firebaseConfig } from './firebase-config.js'; // Importiamo la config dal file esterno
+        import { firebaseConfig } from './firebase-config.js';
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const firebaseConfig = {
-            authDomain: "mlaser.firebaseapp.com",
-            projectId: "mlaser",
-            databaseURL: "https://mlaser-default-rtdb.europe-west1.firebasedatabase.app",
-            storageBucket: "mlaser.firebasestorage.app",
-            messagingSenderId: "680133376423",
-            appId: "1:680133376423:web:be9a5bc2433751beafde82",
-            measurementId: "G-VZE5MR1FS7"
-        };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
         const dbRef = ref(db, 'gallery_3d');
-
-        let items = [];
-        let currentIdx = 0, currentSubIdx = 0;
-
         const adminEmail = "cippiboy@gmail.com";
 
+        let items = [];
+        let currentIdx = 0;
+        let currentSubIdx = 0;
+
+        // Gestione Stato Login
         onAuthStateChanged(auth, (user) => {
             if (user && user.email === adminEmail) {
-                document.getElementById('adminPanel').style.display = 'block';
                 document.body.classList.add('is-admin');
+                document.getElementById('adminPanel').classList.remove('hidden');
             } else {
-                document.getElementById('adminPanel').style.display = 'none';
                 document.body.classList.remove('is-admin');
+                document.getElementById('adminPanel').classList.add('hidden');
             }
-            render();
         });
 
-        // FUNZIONE LOGOUT AGGIUNTA
-        window.adminLogout = function() {
-            if(confirm("Concludere il caricamento e uscire dalla modalità admin?")) {
-                signOut(auth).then(() => {
-                    alert("Modalità Admin disattivata.");
-                }).catch((error) => {
-                    console.error("Errore durante il logout:", error);
-                });
-            }
+        window.checkPassword = () => { document.getElementById('loginModal').classList.add('active'); };
+        window.closeLogin = () => { document.getElementById('loginModal').classList.remove('active'); };
+        
+        window.submitLogin = () => {
+            const pass = document.getElementById('adminPassField').value;
+            signInWithEmailAndPassword(auth, adminEmail, pass)
+                .then(() => { closeLogin(); })
+                .catch(err => alert("Password Errata"));
         };
 
+        window.signOutAdmin = () => { signOut(auth); };
+
+        // Caricamento Dati
         onValue(dbRef, (snapshot) => {
             const data = snapshot.val();
-            items = data ? Object.keys(data).map(key => ({ ...data[key], id: key })) : [];
-            render();
+            items = data ? Object.keys(data).map(id => ({ id, ...data[id] })).reverse() : [];
+            renderGallery();
         });
 
-        window.checkPassword = function() {
-            document.getElementById('loginModal').style.display = 'flex';
-            document.getElementById('adminPassField').focus();
-        };
+        function renderGallery() {
+            const grid = document.getElementById('galleryGrid');
+            grid.innerHTML = items.map((item, i) => `
+                <div class="group bg-[#1e293b]/50 rounded-3xl overflow-hidden border border-white/5 hover:border-red-500/50 transition-all cursor-pointer shadow-2xl" onclick="openPhoto(${i})">
+                    <div class="relative h-72 overflow-hidden">
+                        <img src="${item.images[0]}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="${item.title}">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#0f172a] to-transparent opacity-60"></div>
+                        <div class="absolute bottom-6 left-6">
+                            <h3 class="text-xl font-black text-white uppercase italic tracking-tighter">${item.title}</h3>
+                            <p class="text-red-500 font-bold text-xs uppercase tracking-widest">${item.images.length} FOTO</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-        window.closeLogin = function() {
-            document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('adminPassField').value = '';
-        };
-
-        window.submitLogin = function() {
-            const pass = document.getElementById('adminPassField').value;
-            if (!pass) return;
-            signInWithEmailAndPassword(auth, adminEmail, pass)
-                .then(() => closeLogin())
-                .catch(() => { alert("Password errata!"); document.getElementById('adminPassField').value = ''; });
-        };
-
-        document.getElementById('adminPassField').addEventListener('keypress', (e) => { if(e.key === 'Enter') submitLogin(); });
-
-        window.openDonation = () => document.getElementById('donationModal').classList.add('active');
-        window.closeDonation = () => document.getElementById('donationModal').classList.remove('active');
-        window.openNewsletter = () => document.getElementById('newsletterModal').classList.add('active');
-        window.closeNewsletter = () => document.getElementById('newsletterModal').classList.remove('active');
-        window.closePhoto = () => document.getElementById('photoModal').classList.remove('active');
-
-        window.previewImages = () => {
-            const container = document.getElementById('previewContainer');
-            container.innerHTML = '';
-            Array.from(document.getElementById('postFiles').files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.className = "w-full h-16 object-cover rounded-lg border border-white/10";
-                    container.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            });
-        };
-
-        window.addPost = async () => {
-            const title = document.getElementById('postTitle').value;
-            const desc = document.getElementById('postDesc').value;
-            const files = document.getElementById('postFiles').files;
-            
-            if(!auth.currentUser) return alert("Login richiesto!");
-            if(!title || files.length === 0) return alert("Mancano dati!");
-            
-            const btn = document.getElementById('publishBtn');
-            btn.innerText = "CARICAMENTO..."; btn.disabled = true;
-
-            try {
-                const images = [];
-                for (let f of files) {
-                    const b64 = await new Promise(r => { const reader = new FileReader(); reader.onload = e => r(e.target.result); reader.readAsDataURL(f); });
-                    images.push(b64);
-                }
-                push(dbRef, { title, desc, images }).then(() => {
-                    btn.innerText = "Pubblica"; btn.disabled = false;
-                    document.getElementById('postTitle').value = '';
-                    document.getElementById('postDesc').value = '';
-                    document.getElementById('previewContainer').innerHTML = '';
-                    alert("Progetto 3D caricato!");
-                });
-            } catch (err) {
-                alert("Errore durante il caricamento");
-                btn.disabled = false;
+        window.addPost = () => {
+            const title = document.getElementById('workTitle').value;
+            const imgs = document.getElementById('workImages').value.split(',').map(s => s.trim());
+            const desc = document.getElementById('workDesc').value;
+            if(title && imgs[0]) {
+                push(dbRef, { title, images: imgs, desc, date: Date.now() });
+                document.getElementById('workTitle').value = '';
+                document.getElementById('workImages').value = '';
+                document.getElementById('workDesc').value = '';
             }
         };
 
-        function render() {
-            const grid = document.getElementById('gridContainer');
-            if(!grid) return;
-            grid.innerHTML = items.length ? '' : '<p class="text-gray-500 italic text-center col-span-full">Nessun progetto 3D presente.</p>';
-            const isAdmin = document.body.classList.contains('is-admin');
-            items.forEach((item, i) => {
-                const div = document.createElement('div');
-                div.className = "group relative bg-[#1e293b]/60 rounded-3xl overflow-hidden border border-white/5 shadow-xl transition hover:border-red-500/30";
-                div.innerHTML = `
-                    ${isAdmin ? `<button onclick="event.stopPropagation(); window.deleteWork('${item.id}')" class="absolute top-4 left-4 z-20 bg-red-600 text-white w-8 h-8 rounded-full font-bold shadow-lg">✕</button>` : ''}
-                    <div onclick="openPhoto(${i})" class="cursor-pointer">
-                        <img src="${item.images[0]}" class="w-full h-64 object-cover">
-                        <div class="p-6 text-white flex justify-between items-center italic">
-                            <h3 class="font-black tracking-tighter text-lg uppercase">${item.title}</h3>
-                            <span class="text-red-500 text-xs font-bold">${item.images.length} FOTO</span>
-                        </div>
-                    </div>`;
-                grid.appendChild(div);
-            });
-        }
+        window.openPhoto = (i) => { 
+            currentIdx = i; currentSubIdx = 0; updateModal(); 
+            document.getElementById('photoModal').classList.add('active'); 
+        };
 
-        window.openPhoto = (i) => { currentIdx = i; currentSubIdx = 0; updateModal(); document.getElementById('photoModal').classList.add('active'); };
+        window.closePhoto = () => { document.getElementById('photoModal').classList.remove('active'); };
+
         window.updateModal = () => {
             const item = items[currentIdx];
             document.getElementById('modalImg').src = item.images[currentSubIdx];
@@ -263,19 +176,28 @@
             document.getElementById('modalDesc').innerText = item.desc;
             document.getElementById('imgCounter').innerText = `FOTO ${currentSubIdx + 1} DI ${item.images.length}`;
         };
-        window.changeImg = (dir) => { currentSubIdx = (currentSubIdx + dir + items[currentIdx].images.length) % items[currentIdx].images.length; updateModal(); };
-        window.deleteWork = (id) => { if(confirm("Elimina progetto?")) remove(ref(db, 'gallery_3d/' + id)); };
-        window.deleteFullWork = () => { if(confirm("Elimina intero progetto?")) { remove(ref(db, 'gallery_3d/' + items[currentIdx].id)).then(closePhoto); } };
+
+        window.changeImg = (dir) => { 
+            currentSubIdx = (currentSubIdx + dir + items[currentIdx].images.length) % items[currentIdx].images.length; 
+            updateModal(); 
+        };
+
+        window.deleteFullWork = () => { 
+            if(confirm("Elimina intero progetto?")) { 
+                remove(ref(db, 'gallery_3d/' + items[currentIdx].id)).then(closePhoto); 
+            } 
+        };
+
         window.deleteSingleImage = () => {
             const item = items[currentIdx];
             if(item.images.length <= 1) return alert("Usa 'Elimina Progetto' per l'ultima foto.");
             if(confirm("Elimina questa foto?")) {
                 const newImgs = item.images.filter((_, idx) => idx !== currentSubIdx);
-                set(ref(db, 'gallery_3d/' + item.id + '/images'), newImgs).then(() => { currentSubIdx = 0; updateModal(); });
+                set(ref(db, 'gallery_3d/' + item.id + '/images'), newImgs);
+                currentSubIdx = 0;
+                updateModal();
             }
         };
     </script>
 </body>
-
 </html>
-
