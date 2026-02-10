@@ -35,31 +35,16 @@
     </nav>
 
     <main class="max-w-6xl mx-auto py-12 px-6">
-        <h1 class="text-5xl font-black mb-10 italic uppercase tracking-tighter">Gallery <span class="brand-red">3D</span></h1>
+        <h1 class="text-5xl font-black mb-10 italic uppercase tracking-tighter">Gallery <span class="brand-red">Laser</span></h1>
         
-        <div id="adminPanel" class="admin-only mb-12 p-8 bg-[#1e293b] rounded-3xl border border-red-500/30 shadow-2xl">
-            <div class="flex justify-between mb-6">
-                <h2 class="text-xl font-black uppercase italic text-red-500 tracking-tighter">Nuovo Progetto 3D</h2>
-                <button onclick="adminLogout()" class="text-[10px] bg-red-900/20 text-red-500 border border-red-500/20 px-3 py-1 rounded-lg uppercase font-bold">Esci Admin</button>
-            </div>
-            <div class="grid md:grid-cols-2 gap-6">
-                <div class="space-y-4">
-                    <input type="text" id="postTitle" placeholder="Titolo Progetto" class="w-full bg-[#0f172a] p-3 rounded-xl border border-white/10 outline-none focus:border-red-500 text-white font-bold">
-                    <textarea id="postDesc" placeholder="Descrizione del lavoro..." class="w-full bg-[#0f172a] p-3 rounded-xl border border-white/10 h-24 text-white"></textarea>
-                    <button id="publishBtn" onclick="addPost()" class="w-full bg-red-600 p-4 rounded-xl font-black uppercase italic tracking-widest hover:bg-red-500 transition shadow-lg text-white">Pubblica</button>
-                </div>
-                <div>
-                    <label class="block border-2 border-dashed border-white/10 rounded-2xl p-8 text-center cursor-pointer hover:border-red-500 bg-[#0f172a]/50">
-                        <span class="text-gray-400 text-[10px] font-bold uppercase tracking-tighter">Carica Immagini</span>
-                        <input type="file" id="postFiles" multiple accept="image/*" class="hidden" onchange="previewImages()">
-                    </label>
-                    <div id="previewContainer" class="grid grid-cols-4 gap-2 mt-4"></div>
+        <div id="gridContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="group relative bg-[#1e293b]/60 rounded-3xl overflow-hidden border border-white/5 shadow-xl transition hover:border-red-500/30 cursor-pointer" onclick="openPhoto('img/laser/lavoro1.jpg', 'Taglio Ardesia', 'Descrizione del lavoro svolto')">
+                <img src="img/laser/lavoro1.jpg" class="w-full h-64 object-cover" alt="Lavoro Laser">
+                <div class="p-6 text-white italic text-left">
+                    <h3 class="font-black tracking-tighter text-lg uppercase">Taglio Ardesia</h3>
                 </div>
             </div>
         </div>
-
-        <div id="gridContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            </div>
     </main>
 
     <div id="photoModal">
@@ -86,6 +71,7 @@
     </script>
 </body>
 </html>
+
 
 
 
