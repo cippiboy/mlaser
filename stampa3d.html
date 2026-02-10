@@ -25,8 +25,13 @@
 </head>
 <body class="text-gray-100 font-sans">
 
+    <div class="h-1 bg-blue-600 w-full"></div>
+
     <header class="p-6 flex justify-between items-center max-w-7xl mx-auto">
-        <a href="index.html" class="text-2xl font-black tracking-tighter uppercase italic"><span class="brand-red">M</span>Laser</a>
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-orange-600/20 rounded-lg flex items-center justify-center text-xl text-orange-500">⚡</div>
+            <a href="index.html" class="text-2xl font-black tracking-tighter uppercase italic"><span class="brand-red">M</span>Laser</a>
+        </div>
         <nav class="space-x-8 text-xs font-bold uppercase tracking-widest hidden md:flex">
             <a href="index.html" class="hover:text-red-500 transition">Home</a>
             <a href="laser.html" class="hover:text-red-500 transition">Incisione Laser</a>
@@ -39,18 +44,18 @@
         <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
             <div>
                 <h2 class="text-6xl font-black uppercase italic tracking-tighter leading-none">Galleria <span class="brand-red">3D</span></h2>
-                
+               
             </div>
         </div>
 
         <div id="adminPanel" class="hidden mb-12 p-8 bg-red-600/10 border border-red-600/20 rounded-3xl">
             <h3 class="text-xl font-bold mb-6 uppercase italic">Aggiungi Nuovo Progetto</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" id="workTitle" placeholder="Titolo Progetto" class="bg-[#0f172a] border border-white/10 p-4 rounded-xl focus:outline-none focus:border-red-500">
-                <input type="text" id="workImages" placeholder="URL Immagini (separate da virgola)" class="bg-[#0f172a] border border-white/10 p-4 rounded-xl focus:outline-none focus:border-red-500">
-                <textarea id="workDesc" placeholder="Descrizione del lavoro..." class="bg-[#0f172a] border border-white/10 p-4 rounded-xl md:col-span-2 h-32 focus:outline-none focus:border-red-500"></textarea>
+                <input type="text" id="workTitle" placeholder="Titolo Progetto" class="bg-[#0f172a] border border-white/10 p-4 rounded-xl focus:outline-none focus:border-red-500 text-white">
+                <input type="text" id="workImages" placeholder="URL Immagini (separate da virgola)" class="bg-[#0f172a] border border-white/10 p-4 rounded-xl focus:outline-none focus:border-red-500 text-white">
+                <textarea id="workDesc" placeholder="Descrizione del lavoro..." class="bg-[#0f172a] border border-white/10 p-4 rounded-xl md:col-span-2 h-32 focus:outline-none focus:border-red-500 text-white"></textarea>
                 <button onclick="addPost()" class="md:col-span-2 bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl transition uppercase tracking-widest">Pubblica Progetto</button>
-                <button onclick="signOutAdmin()" class="md:col-span-2 text-gray-500 text-xs mt-2 underline uppercase">Esci dalla sessione Admin</button>
+                <button onclick="signOutAdmin()" class="md:col-span-2 text-gray-500 text-xs mt-2 underline uppercase tracking-widest">Esci dalla sessione Admin</button>
             </div>
         </div>
 
@@ -59,7 +64,7 @@
 
         <section class="mt-32 text-center bg-[#1e293b]/30 p-12 rounded-[40px] border border-white/5">
             <h3 class="text-4xl font-black uppercase italic tracking-tighter mb-4">Hai un progetto in mente?</h3>
-            <p class="text-gray-400 mb-8 max-w-xl mx-auto uppercase text-xs tracking-[0.2em]">Mandami un messaggio con la tua idea.</p>
+            <p class="text-gray-400 mb-8 max-w-xl mx-auto uppercase text-xs tracking-[0.2em]">Mandami un messaggio con la tua idea e vediamo il da farsi.</p>
             <a href="mailto:cippiboy@gmail.com" class="inline-block bg-red-600 text-white font-black px-10 py-5 rounded-2xl hover:bg-red-700 transition-all transform hover:scale-105 uppercase italic tracking-widest">Contattami</a>
         </section>
     </main>
@@ -73,12 +78,12 @@
     </footer>
 
     <div id="loginModal">
-        <div class="bg-[#1e293b] p-8 rounded-3xl border border-white/10 w-full max-w-sm">
-            <h3 class="text-xl font-bold mb-4 uppercase italic text-center">Accesso Riservato</h3>
+        <div class="bg-[#1e293b] p-8 rounded-3xl border border-white/10 w-full max-w-sm text-center">
+            <h3 class="text-xl font-bold mb-4 uppercase italic">Area Admin</h3>
             <input type="password" id="adminPassField" placeholder="Password" class="w-full bg-[#0f172a] border border-white/10 p-4 rounded-xl mb-4 text-white text-center">
             <div class="flex gap-2">
-                <button onclick="submitLogin()" class="flex-1 bg-red-600 py-3 rounded-xl font-bold uppercase text-xs">Entra</button>
-                <button onclick="closeLogin()" class="flex-1 bg-white/10 py-3 rounded-xl font-bold uppercase text-xs">Annulla</button>
+                <button onclick="submitLogin()" class="flex-1 bg-red-600 py-3 rounded-xl font-bold uppercase text-[10px]">Entra</button>
+                <button onclick="closeLogin()" class="flex-1 bg-white/10 py-3 rounded-xl font-bold uppercase text-[10px]">Annulla</button>
             </div>
         </div>
     </div>
@@ -133,7 +138,7 @@
         window.closeLogin = () => { document.getElementById('loginModal').classList.remove('active'); };
         window.submitLogin = () => {
             const pass = document.getElementById('adminPassField').value;
-            signInWithEmailAndPassword(auth, adminEmail, pass).then(() => { closeLogin(); }).catch(err => alert("Accesso Negato"));
+            signInWithEmailAndPassword(auth, adminEmail, pass).then(() => { closeLogin(); }).catch(err => alert("Password Errata"));
         };
         window.signOutAdmin = () => { signOut(auth); };
 
@@ -143,10 +148,10 @@
             const grid = document.getElementById('galleryGrid');
             grid.innerHTML = items.map((item, i) => `
                 <div class="group bg-[#1e293b]/50 rounded-3xl overflow-hidden border border-white/5 hover:border-red-500/50 transition-all cursor-pointer shadow-2xl" onclick="openPhoto(${i})">
-                    <div class="relative h-72 overflow-hidden">
+                    <div class="relative h-72 overflow-hidden text-left">
                         <img src="${item.images[0]}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="${item.title}">
                         <div class="absolute inset-0 bg-gradient-to-t from-[#0f172a] to-transparent opacity-60"></div>
-                        <div class="absolute bottom-6 left-6 text-left">
+                        <div class="absolute bottom-6 left-6">
                             <h3 class="text-xl font-black text-white uppercase italic tracking-tighter">${item.title}</h3>
                             <p class="text-red-500 font-bold text-xs uppercase tracking-widest">${item.images.length} FOTO</p>
                         </div>
