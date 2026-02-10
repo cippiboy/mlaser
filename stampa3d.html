@@ -31,7 +31,7 @@
             <a href="index.html" class="hover:text-red-500 transition">Home</a>
             <a href="laser.html" class="hover:text-red-500 transition">Incisione Laser</a>
             <a href="bio.html" class="hover:text-red-500 transition">Chi Sono</a>
-            <button onclick="checkPassword()" class="text-red-500 border border-red-500/30 px-3 py-1 rounded hover:bg-red-500 hover:text-white transition uppercase text-[10px]">Admin</button>
+            <button onclick="checkPassword()" class="text-red-500 border border-red-500/30 px-3 py-1 rounded hover:bg-red-500 hover:text-white transition">Admin</button>
         </nav>
     </header>
 
@@ -39,6 +39,7 @@
         <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
             <div>
                 <h2 class="text-6xl font-black uppercase italic tracking-tighter leading-none">Galleria <span class="brand-red">3D</span></h2>
+                
             </div>
         </div>
 
@@ -49,7 +50,7 @@
                 <input type="text" id="workImages" placeholder="URL Immagini (separate da virgola)" class="bg-[#0f172a] border border-white/10 p-4 rounded-xl focus:outline-none focus:border-red-500">
                 <textarea id="workDesc" placeholder="Descrizione del lavoro..." class="bg-[#0f172a] border border-white/10 p-4 rounded-xl md:col-span-2 h-32 focus:outline-none focus:border-red-500"></textarea>
                 <button onclick="addPost()" class="md:col-span-2 bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl transition uppercase tracking-widest">Pubblica Progetto</button>
-                <button onclick="signOutAdmin()" class="md:col-span-2 text-gray-500 text-[10px] mt-2 underline uppercase">Esci dalla sessione Admin</button>
+                <button onclick="signOutAdmin()" class="md:col-span-2 text-gray-500 text-xs mt-2 underline uppercase">Esci dalla sessione Admin</button>
             </div>
         </div>
 
@@ -58,7 +59,7 @@
 
         <section class="mt-32 text-center bg-[#1e293b]/30 p-12 rounded-[40px] border border-white/5">
             <h3 class="text-4xl font-black uppercase italic tracking-tighter mb-4">Hai un progetto in mente?</h3>
-            <p class="text-gray-400 mb-8 max-w-xl mx-auto uppercase text-xs tracking-[0.2em]">Mandami un messaggio per preventivi.</p>
+            <p class="text-gray-400 mb-8 max-w-xl mx-auto uppercase text-xs tracking-[0.2em]">Mandami un messaggio con la tua idea.</p>
             <a href="mailto:cippiboy@gmail.com" class="inline-block bg-red-600 text-white font-black px-10 py-5 rounded-2xl hover:bg-red-700 transition-all transform hover:scale-105 uppercase italic tracking-widest">Contattami</a>
         </section>
     </main>
@@ -72,12 +73,12 @@
     </footer>
 
     <div id="loginModal">
-        <div class="bg-[#1e293b] p-8 rounded-3xl border border-white/10 w-full max-w-sm text-center">
-            <h3 class="text-xl font-bold mb-4 uppercase italic">Area Admin</h3>
+        <div class="bg-[#1e293b] p-8 rounded-3xl border border-white/10 w-full max-w-sm">
+            <h3 class="text-xl font-bold mb-4 uppercase italic text-center">Accesso Riservato</h3>
             <input type="password" id="adminPassField" placeholder="Password" class="w-full bg-[#0f172a] border border-white/10 p-4 rounded-xl mb-4 text-white text-center">
             <div class="flex gap-2">
-                <button onclick="submitLogin()" class="flex-1 bg-red-600 py-3 rounded-xl font-bold uppercase text-[10px]">Entra</button>
-                <button onclick="closeLogin()" class="flex-1 bg-white/10 py-3 rounded-xl font-bold uppercase text-[10px]">Chiudi</button>
+                <button onclick="submitLogin()" class="flex-1 bg-red-600 py-3 rounded-xl font-bold uppercase text-xs">Entra</button>
+                <button onclick="closeLogin()" class="flex-1 bg-white/10 py-3 rounded-xl font-bold uppercase text-xs">Annulla</button>
             </div>
         </div>
     </div>
@@ -91,12 +92,12 @@
                 <button onclick="changeImg(1)" class="absolute right-0 bg-black/50 p-4 text-white hover:bg-red-600 transition">❯</button>
             </div>
             <div class="text-center mt-6">
-                <p id="imgCounter" class="text-red-500 font-bold text-[10px] tracking-tighter mb-2"></p>
+                <p id="imgCounter" class="text-red-500 font-bold text-xs tracking-tighter mb-2"></p>
                 <h3 id="modalTitle" class="text-3xl font-black text-white uppercase italic tracking-tighter"></h3>
                 <p id="modalDesc" class="text-gray-400 text-sm mt-3 max-w-2xl"></p>
                 <div class="admin-only mt-6 space-x-4">
-                    <button onclick="deleteSingleImage()" class="bg-orange-600/20 text-orange-500 px-4 py-2 rounded-lg text-[10px] font-bold border border-orange-500/20 uppercase">Elimina Foto</button>
-                    <button onclick="deleteFullWork()" class="bg-red-600/20 text-red-500 px-4 py-2 rounded-lg text-[10px] font-bold border border-red-500/20 uppercase">Elimina Progetto</button>
+                    <button onclick="deleteSingleImage()" class="bg-orange-600/20 text-orange-500 px-4 py-2 rounded-lg text-xs font-bold border border-orange-500/20 uppercase tracking-widest">Elimina Foto</button>
+                    <button onclick="deleteFullWork()" class="bg-red-600/20 text-red-500 px-4 py-2 rounded-lg text-xs font-bold border border-red-500/20 uppercase tracking-widest">Elimina Progetto</button>
                 </div>
             </div>
         </div>
@@ -147,7 +148,7 @@
                         <div class="absolute inset-0 bg-gradient-to-t from-[#0f172a] to-transparent opacity-60"></div>
                         <div class="absolute bottom-6 left-6 text-left">
                             <h3 class="text-xl font-black text-white uppercase italic tracking-tighter">${item.title}</h3>
-                            <p class="text-red-500 font-bold text-[10px] uppercase tracking-widest">${item.images.length} FOTO</p>
+                            <p class="text-red-500 font-bold text-xs uppercase tracking-widest">${item.images.length} FOTO</p>
                         </div>
                     </div>
                 </div>
@@ -195,4 +196,3 @@
     </script>
 </body>
 </html>
-
