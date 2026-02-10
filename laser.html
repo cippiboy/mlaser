@@ -13,45 +13,68 @@
             background-repeat: repeat; opacity: 0.1; z-index: -1; pointer-events: none;
         }
         .brand-red { color: #ef4444; }
-        #photoModal { display: none; position: fixed; inset: 0; z-index: 100; align-items: center; justify-content: center; padding: 20px; }
-        .active { display: flex !important; background: rgba(0,0,0,0.95); backdrop-filter: blur(4px); }
+        #photoModal { 
+            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); 
+            backdrop-filter: blur(10px); z-index: 100; align-items: center; justify-content: center; 
+        }
+        #photoModal.active { display: flex; }
     </style>
 </head>
 <body class="text-gray-100 font-sans">
-    
-    <nav class="flex justify-between items-center p-4 bg-[#1e293b]/90 backdrop-blur-md border-b border-white/5 sticky top-0 z-50">
-        <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='index.html'">
-            <img src="logo.svg" alt="Logo" class="h-6 w-auto" style="filter: brightness(0) invert(1);">
-            <div class="text-3xl font-black tracking-tighter">
-                <span class="brand-red">ML</span><span class="text-white">aser</span>
+
+    <div class="h-1 bg-blue-600 w-full"></div>
+
+    <header class="p-6 flex justify-between items-center max-w-7xl mx-auto">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-orange-600/20 rounded-lg flex items-center justify-center text-xl text-orange-500">⚡</div>
+            <a href="index.html" class="text-2xl font-black tracking-tighter uppercase italic"><span class="brand-red">M</span>Laser</a>
+        </div>
+        <nav class="space-x-8 text-xs font-bold uppercase tracking-widest hidden md:flex">
+            <a href="index.html" class="hover:text-red-500 transition">Home</a>
+            <a href="stampa3d.html" class="hover:text-red-500 transition font-bold">Stampa 3D</a>
+            <a href="bio.html" class="hover:text-red-500 transition font-bold">Chi Sono</a>
+            <a href="index.html" class="text-gray-400 hover:text-white transition text-sm font-medium uppercase tracking-tighter">← Home</a>
+        </nav>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-12">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+            <div>
+                <h2 class="text-6xl font-black uppercase italic tracking-tighter leading-none">Incisione <span class="brand-red">Laser</span></h2>
+                <p class="text-gray-400 mt-4 max-w-md uppercase text-xs tracking-widest">Precisione millimetrica su legno, ardesia e materiali naturali.</p>
             </div>
         </div>
-        <div class="flex items-center gap-4">
-            <a class='text-gray-400 hover:text-white transition text-sm font-medium uppercase tracking-tighter' href='index.html'>← Home</a>
-        </div>
-    </nav>
 
-    <main class="max-w-6xl mx-auto py-12 px-6">
-        <h1 class="text-5xl font-black mb-10 italic uppercase tracking-tighter">Gallery <span class="brand-red">Laser</span></h1>
-        
-        <div id="gridContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            
-            <div class="group relative bg-[#1e293b]/60 rounded-3xl overflow-hidden border border-white/5 shadow-xl transition hover:border-red-500/30 cursor-pointer" onclick="openPhoto('img/laser/lavoro1.jpg', 'Taglio Ardesia', 'Descrizione del lavoro svolto')">
-                <img src="img/laser/lavoro1.jpg" class="w-full h-64 object-cover" alt="Lavoro Laser">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="group bg-[#1e293b]/50 rounded-3xl overflow-hidden border border-white/5 hover:border-orange-500/50 transition-all cursor-pointer shadow-2xl" onclick="openPhoto('img/laser/lavoro1.jpg', 'Taglio Ardesia', 'Esempio di incisione ad alta precisione su lastra di ardesia naturale.')">
+                <div class="relative h-64 overflow-hidden">
+                    <img src="img/laser/lavoro1.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Lavoro Laser">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0f172a] to-transparent opacity-60"></div>
+                </div>
                 <div class="p-6 text-white italic">
                     <h3 class="font-black tracking-tighter text-lg uppercase">Taglio Ardesia</h3>
                 </div>
             </div>
             </div>
+
+        <section class="mt-32 text-center bg-[#1e293b]/30 p-12 rounded-[40px] border border-white/5">
+            <h3 class="text-4xl font-black uppercase italic tracking-tighter mb-4">Vuoi personalizzare un oggetto?</h3>
+            <p class="text-gray-400 mb-8 max-w-xl mx-auto uppercase text-xs tracking-[0.2em]">Mandami un messaggio per trasformare la tua idea in un'incisione unica.</p>
+            <a href="mailto:cippiboy@gmail.com" class="inline-block bg-red-600 text-white font-black px-10 py-5 rounded-2xl hover:bg-red-700 transition-all transform hover:scale-105 uppercase italic tracking-widest">Contattami</a>
+        </section>
     </main>
+
+    <footer class="mt-20 py-10 border-t border-white/5 text-center">
+        <p class="text-gray-600 text-[10px] uppercase tracking-[0.3em]">&copy; 2024 MLaser - Artigianato Digitale</p>
+    </footer>
 
     <div id="photoModal">
         <button onclick="closePhoto()" class="absolute top-6 right-6 text-white text-5xl">×</button>
-        <div class="max-w-5xl w-full flex flex-col items-center">
+        <div class="max-w-5xl w-full flex flex-col items-center p-4 text-center">
             <img id="modalImg" src="" class="max-h-[70vh] rounded-2xl shadow-2xl object-contain border border-white/10">
-            <div class="text-center mt-6">
+            <div class="mt-6">
                 <h3 id="modalTitle" class="text-3xl font-black text-white uppercase italic tracking-tighter"></h3>
-                <p id="modalDesc" class="text-gray-400 text-sm mt-3"></p>
+                <p id="modalDesc" class="text-gray-400 text-sm mt-3 max-w-2xl"></p>
             </div>
         </div>
     </div>
@@ -63,6 +86,7 @@
             document.getElementById('modalDesc').innerText = desc;
             document.getElementById('photoModal').classList.add('active');
         }
+
         function closePhoto() {
             document.getElementById('photoModal').classList.remove('active');
         }
