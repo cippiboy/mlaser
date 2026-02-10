@@ -23,17 +23,18 @@
 <body class="text-gray-100 font-sans">
     
     <nav class="flex justify-between items-center p-4 bg-[#1e293b]/90 backdrop-blur-md border-b border-white/5 sticky top-0 z-50">
-        <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='index.html'">
-            <img src="logo.svg" alt="Logo" class="h-6 w-auto" style="filter: brightness(0) invert(1);">
-            <div class="text-3xl font-black tracking-tighter">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+            <img src="logo.svg" alt="Logo" class="h-5 w-auto" style="filter: brightness(0) invert(1);">
+            <div class="text-2xl font-black tracking-tighter">
                 <span class="brand-red">ML</span><span class="text-white">aser</span>
             </div>
         </div>
-        <div class="flex items-center gap-4">
-            <a href="laser.html" class="text-gray-400 hover:text-white transition text-xs font-bold uppercase tracking-widest hidden md:block">Incisione Laser</a>
-            <a href="bio.html" class="text-gray-400 hover:text-white transition text-xs font-bold uppercase tracking-widest hidden md:block">Chi Sono</a>
-            <button onclick="checkPassword()" class="text-[10px] text-red-500 border border-red-500/20 px-2 py-1 rounded hover:bg-red-500 hover:text-white transition uppercase font-bold">Admin</button>
-            <a class='text-gray-400 hover:text-white transition text-sm font-medium uppercase tracking-tighter' href='index.html'>← Home</a>
+        
+        <div class="flex items-center gap-3 md:gap-6">
+            <a href="laser.html" class="text-gray-400 hover:text-white transition text-[11px] md:text-sm font-bold uppercase tracking-tighter">Laser</a>
+            <a href="bio.html" class="text-gray-400 hover:text-white transition text-[11px] md:text-sm font-bold uppercase tracking-tighter">Bio</a>
+            <button onclick="checkPassword()" class="text-[9px] md:text-[10px] text-red-600 border border-red-600/30 px-2 py-0.5 rounded hover:bg-red-600 hover:text-white transition uppercase font-black">Admin</button>
+            <a href="index.html" class="text-gray-400 hover:text-white transition text-[11px] md:text-sm font-bold uppercase tracking-tighter">← Home</a>
         </div>
     </nav>
 
@@ -100,6 +101,7 @@
         import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+        // Configurazione Firebase rimasta originale
         const firebaseConfig = {
             apiKey: "AIzaSyBJD1OYTzFyNNHMi8IL7rmpb9iYOSJbyy4",
             authDomain: "mlaser.firebaseapp.com",
@@ -176,16 +178,13 @@
             });
         };
 
-        // NUOVA FUNZIONE ADDPOST CON COMPRESSIONE
         window.addPost = async () => {
             const title = document.getElementById('postTitle').value;
             const desc = document.getElementById('postDesc').value;
             const files = document.getElementById('postFiles').files;
             if(!title || files.length === 0) return alert("Inserisci titolo e immagini!");
-            
             const btn = document.getElementById('publishBtn');
             btn.disabled = true;
-
             try {
                 const images = [];
                 for (let i = 0; i < files.length; i++) {
@@ -193,7 +192,6 @@
                     const b64 = await compressImage(files[i]);
                     images.push(b64);
                 }
-                
                 btn.innerText = "CARICAMENTO...";
                 push(dbRef, { title, desc, images }).then(() => {
                     btn.innerText = "Pubblica"; btn.disabled = false;
@@ -208,7 +206,6 @@
             }
         };
 
-        // FUNZIONE LOGICA COMPRESSIONE
         function compressImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -218,21 +215,16 @@
                         const canvas = document.createElement('canvas');
                         let width = img.width;
                         let height = img.height;
-                        const maxSide = 1200; // Ridimensiona se più grande di 1200px
-
+                        const maxSide = 1200;
                         if (width > height && width > maxSide) {
-                            height *= maxSide / width;
-                            width = maxSide;
+                            height *= maxSide / width; width = maxSide;
                         } else if (height > maxSide) {
-                            width *= maxSide / height;
-                            height = maxSide;
+                            width *= maxSide / height; height = maxSide;
                         }
-
                         canvas.width = width;
                         canvas.height = height;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
-                        // Qualità 0.7 = 70% compressione JPEG
                         resolve(canvas.toDataURL('image/jpeg', 0.7));
                     };
                     img.src = e.target.result;
@@ -267,5 +259,3 @@
     </script>
 </body>
 </html>
-
-
