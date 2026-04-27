@@ -24,6 +24,15 @@
             pointer-events: none;
         }
         .brand-red { color: #ef4444; }
+
+        /* Animazione lampeggiante per la novità */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .blink-news {
+            animation: blink 1s infinite;
+        }
     </style>
 </head>
 <body class="text-gray-100 font-sans leading-relaxed">
@@ -76,6 +85,19 @@
                 <p class="text-blue-100/60 text-sm mb-4">Taglio e incisione su legno, ardesia e pelle per regali unici.</p>
                 <div class="text-orange-500 font-bold flex items-center group-hover:translate-x-2 transition-transform uppercase text-xs">
                     VEDI GALLERIA <span class="ml-1">→</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="mt-8 flex justify-center">
+            <a href="tools.html" class="relative group flex items-center gap-4 py-3 px-8 bg-[#1e293b]/50 backdrop-blur-sm rounded-xl border border-white/10 hover:border-cyan-500/50 transition-all shadow-lg overflow-visible">
+                <span class="text-cyan-400 font-black uppercase italic tracking-widest text-lg">MLaser Tools</span>
+                
+                <div class="relative flex items-center blink-news">
+                    <svg width="60" height="25" viewBox="0 0 60 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 5H45V0L60 12.5L45 25V20H0V5Z" fill="#ef4444"/>
+                        <text x="5" y="16" fill="white" font-family="sans-serif" font-weight="bold" font-size="8" letter-spacing="0.5">NOVITÀ</text>
+                    </svg>
                 </div>
             </a>
         </div>
