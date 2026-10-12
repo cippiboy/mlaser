@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLaser | Generatore di Vasetti 3D</title>
+    <link rel="icon" type="image/svg+xml" href="favicon_ML.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        body { 
+            background-color: #0f172a; 
+            position: relative;
+            scroll-behavior: smooth;
+            padding-bottom: 40px;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 10 L40 25 L40 40 L20 40 L20 25 Z M28 40 L32 40 L30 45 Z' fill='none' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            opacity: 0.1;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .brand-red { color: #ef4444; }
+        .tool-ui { background: #161b22; border-left: 1px solid #30363d; }
+        .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+        .sw { height: 20px; border-radius: 4px; cursor: pointer; border: 1px solid #444; transition: 0.2s; }
+        .sw.active { border: 2px solid #fff; outline: 1px solid #00e5ff; transform: scale(1.1); }
+        input[type="range"] { accent-color: #00e5ff; cursor: pointer; width: 100%; }
+        select, input[type="text"] { background: #000; border: 1px solid #30363d; color: white; padding: 8px; border-radius: 6px; outline: none; }
+        select:focus, input[type="text"]:focus { border-color: #00e5ff; }
+    </style>
+</head>
+<body class="text-gray-100 font-sans leading-relaxed">
+    <nav class="flex justify-between items-center p-4 bg-[#1e293b]/90 backdrop-blur-md border-b border-white/5 sticky top-0 z-50">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+            <img src="logo.svg" alt="Logo" class="h-5 w-auto" style="filter: brightness(0) invert(1);">
+            <div class="text-2xl font-black tracking-tighter">
+                <span class="brand-red">ML</span><span class="text-white">aser</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-5 md:gap-8 font-bold uppercase text-[11px] md:text-sm tracking-tighter text-gray-400">
+            <a href="stampa3d.html" class="hover:text-white transition">3D</a>
+            <a href="laser.html" class="hover:text-white transition">Laser</a>
+            <a href="bio.html" class="hover:text-white transition">Bio</a>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-6 py-6">
+        <a href="tools.html" class="inline-flex items-center gap-2 text-xs font-bold text-gray-400 hover:text-white transition-colors mb-6 group">
+            <span class="group-hover:-translate-x-1 transition-transform">←</span> TORNA AI TOOLS
+        </a>
+        <header class="mb-8">
+            <h1 class="text-3xl font-black italic uppercase tracking-tighter">Configuratore 3D <span class="text-cyan-400">Vasetti</span></h1>
+        </header>
+
+        <div class="bg-[#0d1117] rounded-2xl border border-white/10 overflow-hidden flex flex-col md:flex-row h-[700px] shadow-2xl">
+            <!-- Area 3D (Sfondo grigio studio CAD) -->
+            <div id="canvas-target" class="flex-1 relative bg-[#2a2d32]">
+                <div class="absolute top-4 left-4 text-[10px] text-cyan-400/40 font-mono pointer-events-none uppercase tracking-widest">Workspace: Shape & Surface</div>
+            </div>
+
+            <!-- Pannello Controlli -->
+            <div class="w-full md:w-[380px] tool-ui p-6 flex flex-col gap-5 overflow-y-auto">
+                
+                <!-- Forma Base del Vaso -->
+                <div>
+                    <label class="text-[10px] font-bold opacity-40 uppercase tracking-widest mb-2 block">Body Shape</label>
+                    <select id="baseShape" class="w-full text-sm">
+                        <option value="classic">Classica (Curvato)</option>
+                        <option value="modern">Moderna (Cilindrico Svasato)</option>
+                        <option value="sphere">Sferica / Anfora</option>
+                    </select>
+                </div>
+
+                <!-- Cross Section Shape -->
+                <div>
+                    <label class="text-[10px] font-bold opacity-40 uppercase tracking-widest mb-2 block">Cross Section Shape</label>
+                    <select id="crossSection" class="w-full text-sm">
+                        <option value="default">Default (Circolare)</option>
+                        <option value="polygon" selected>Polygon (Poligonale)</option>
+                        <option value="wave">Wave (Ondulata)</option>
+                    </select>
+                </div>
+
+                <!-- Slider Lati Poligono -->
+                <div id="polygonContainer" class="bg-black/40 p-4 rounded-xl border border-white/5 flex flex-col gap-2">
+                    <div class="flex justify-between text-[10px] uppercase font-bold">
+                        <span class="text-cyan-400">Edge Number (Lati)</span>
+                        <span id="valPolygonEdges" class="text-white">8</span>
+                    </div>
+                    <input type="range" id="polygonEdgesRange" min="3" max="16" value="8">
+                </div>
+
+                <!-- Surface Effects (Senza Voronoi) -->
+                <div>
+                    <label class="text-[10px] font-bold opacity-40 uppercase tracking-widest mb-2 block">Surface Effects</label>
+                    <select id="textureStyle" class="w-full text-sm">
+                        <option value="none">None (Liscio)</option>
+                        <option value="strip">Strip (Scanalato Verticale)</option>
+                        <option value="lowpoly">Low Poly</option>
+                    </select>
+                </div>
+
+                <!-- Slider Frequenza Superficie -->
+                <div id="frequencyContainer" class="bg-black/40 p-4 rounded-xl border border-white/5 flex flex-col gap-2">
+                    <div class="flex justify-between text-[10px] uppercase font-bold">
+                        <span class="text-cyan-400">Frequenza / Costole</span>
+                        <span id="valSegments" class="text-white">24</span>
+                    </div>
+                    <input type="range" id="segmentsRange" min="8" max="48" value="24">
+                </div>
+
+                <!-- Selezione Colore Vaso -->
+                <div>
+                    <label class="text-[10px] font-bold opacity-40 uppercase tracking-widest mb-2 block">Colore Materiale</label>
+                    <div id="p-color" class="color-grid"></div>
+                </div>
+
+                <div class="bg-black/40 p-4 rounded-xl border border-white/5 space-y-4">
+                    <div>
+                        <div class="flex justify-between text-[10px] mb-1 uppercase font-bold"><span>Altezza Vaso</span><span id="valHeight" class="text-cyan-400">120 mm</span></div>
+                        <input type="range" id="heightRange" min="60" max="250" value="120">
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[10px] mb-1 uppercase font-bold"><span>Diametro Base</span><span id="valRadius" class="text-cyan-400">40 mm</span></div>
+                        <input type="range" id="radiusRange" min="20" max="80" value="40">
+                    </div>
+                </div>
+
+                <div class="bg-black/40 p-4 rounded-xl border border-white/5 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="block text-xs font-bold uppercase">Vase Mode (Spiralize)</span>
+                            <span class="text-[10px] text-gray-400">Singolo perimetro continuo</span>
+                        </div>
+                        <input type="checkbox" id="vaseMode" class="w-4 h-4 accent-cyan-400 cursor-pointer">
+                    </div>
+                    <div id="thicknessContainer" class="space-y-3 transition-opacity">
+                        <div>
+                            <div class="flex justify-between text-[10px] mb-1 uppercase font-bold"><span>Spessore Parete</span><span id="valThickness" class="text-cyan-400">1.2 mm</span></div>
+                            <input type="range" id="thicknessRange" min="0.8" max="4.0" step="0.2" value="1.2">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-[10px] mb-1 uppercase font-bold"><span>Spessore Fondo Chiuso</span><span id="valBottom" class="text-cyan-400">2.0 mm</span></div>
+                            <input type="range" id="bottomRange" min="1.0" max="6.0" step="0.5" value="2.0">
+                        </div>
+                    </div>
+                </div>
+
+                <button id="downloadBtn" class="mt-auto w-full bg-cyan-500 hover:bg-cyan-400 text-black font-black py-4 rounded-xl uppercase text-xs tracking-widest transition-all shadow-lg active:scale-95 cursor-pointer">
+                    SCARICA STL PER SLICER
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let scene, camera, renderer, controls3D, vaseMesh, vaseMaterial;
+        const colors = ["#ffffff", "#cccccc", "#777777", "#222222", "#00e5ff", "#e30613", "#ff6d00", "#ffea00", "#238636", "#1a237e", "#d500f9", "#795548", "#ff80ab", "#00008b", "#b71c1c"];
+        let currentVaseColor = "#cccccc";
+
+        const controlsUI = {
+            baseShape: document.getElementById('baseShape'),
+            crossSection: document.getElementById('crossSection'),
+            polygonContainer: document.getElementById('polygonContainer'),
+            polygonEdges: document.getElementById('polygonEdgesRange'),
+            textureStyle: document.getElementById('textureStyle'),
+            height: document.getElementById('heightRange'),
+            radius: document.getElementById('radiusRange'),
+            segments: document.getElementById('segmentsRange'),
+            vaseMode: document.getElementById('vaseMode'),
+            thickness: document.getElementById('thicknessRange'),
+            bottom: document.getElementById('bottomRange'),
+            thicknessContainer: document.getElementById('thicknessContainer')
+        };
+
+        const labels = {
+            height: document.getElementById('valHeight'),
+            radius: document.getElementById('valRadius'),
+            segments: document.getElementById('valSegments'),
+            polygonEdges: document.getElementById('valPolygonEdges'),
+            thickness: document.getElementById('valThickness'),
+            bottom: document.getElementById('valBottom')
+        };
+
+        function init() {
+            const target = document.getElementById('canvas-target');
+
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(45, target.clientWidth / target.clientHeight, 0.1, 1000);
+            camera.position.set(0, 90, 210);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(target.clientWidth, target.clientHeight);
+            renderer.shadowMap.enabled = true;
+            target.appendChild(renderer.domElement);
+
+            controls3D = new THREE.OrbitControls(camera, renderer.domElement);
+            controls3D.enableDamping = true;
+            controls3D.dampingFactor = 0.05;
+            controls3D.target.set(0, 50, 0);
+
+            scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+
+            const keyLight = new THREE.DirectionalLight(0xffffff, 0.9);
+            keyLight.position.set(120, 200, 150);
+            scene.add(keyLight);
+
+            const fillLight = new THREE.DirectionalLight(0xffffff, 0.35);
+            fillLight.position.set(-120, 80, -100);
+            scene.add(fillLight);
+
+            const grid = new THREE.GridHelper(200, 20, 0x555555, 0x333333);
+            grid.position.y = -0.1;
+            scene.add(grid);
+
+            const colorContainer = document.getElementById('p-color');
+            colors.forEach(col => {
+                const d = document.createElement('div');
+                d.className = 'sw' + (col === currentVaseColor ? ' active' : '');
+                d.style.background = col;
+                d.onclick = () => {
+                    colorContainer.querySelector('.active').classList.remove('active');
+                    d.classList.add('active');
+                    currentVaseColor = col;
+                    if (vaseMaterial) vaseMaterial.color.set(col);
+                };
+                colorContainer.appendChild(d);
+            });
+
+            controlsUI.crossSection.addEventListener('change', () => {
+                if (controlsUI.crossSection.value === 'polygon') {
+                    controlsUI.polygonContainer.classList.remove('hidden');
+                    controlsUI.polygonContainer.classList.add('flex');
+                } else {
+                    controlsUI.polygonContainer.classList.remove('flex');
+                    controlsUI.polygonContainer.classList.add('hidden');
+                }
+                updateVase();
+            });
+
+            Object.values(controlsUI).forEach(ctrl => {
+                if (ctrl) {
+                    ctrl.addEventListener('input', updateVase);
+                    ctrl.addEventListener('change', updateVase);
+                }
+            });
+
+            controlsUI.vaseMode.addEventListener('change', () => {
+                if (controlsUI.vaseMode.checked) {
+                    controlsUI.thicknessContainer.style.opacity = '0.4';
+                    controlsUI.thickness.disabled = true;
+                } else {
+                    controlsUI.thicknessContainer.style.opacity = '1';
+                    controlsUI.thickness.disabled = false;
+                }
+                updateVase();
+            });
+
+            window.addEventListener('resize', () => {
+                camera.aspect = target.clientWidth / target.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(target.clientWidth, target.clientHeight);
+            });
+
+            updateVase();
+            animate();
+        }
+
+        function getRadiusProfile(v, shape) {
+            if (shape === 'classic') {
+                return 1.0 - 0.35 * Math.sin(v * Math.PI) + 0.25 * Math.pow(v, 2);
+            } else if (shape === 'modern') {
+                return 0.75 + 0.5 * v + 0.15 * Math.sin(v * Math.PI * 1.5);
+            } else if (shape === 'sphere') {
+                return 0.55 + 0.85 * Math.sin(v * Math.PI * 0.85) - (v * 0.15);
+            }
+            return 1.0;
+        }
+
+        function updateVase() {
+            labels.height.innerText = controlsUI.height.value + ' mm';
+            labels.radius.innerText = controlsUI.radius.value + ' mm';
+            labels.segments.innerText = controlsUI.segments.value;
+            labels.polygonEdges.innerText = controlsUI.polygonEdges.value;
+            labels.thickness.innerText = controlsUI.thickness.value + ' mm';
+            labels.bottom.innerText = controlsUI.bottom.value + ' mm';
+
+            if (vaseMesh) {
+                scene.remove(vaseMesh);
+                vaseMesh.geometry.dispose();
+            }
+
+            const height = parseFloat(controlsUI.height.value);
+            const baseRadius = parseFloat(controlsUI.radius.value);
+            const segments = parseInt(controlsUI.segments.value);
+            const crossShape = controlsUI.crossSection.value;
+            const polygonEdges = parseInt(controlsUI.polygonEdges.value);
+            const style = controlsUI.textureStyle.value;
+            const isVaseMode = controlsUI.vaseMode.checked;
+            const wallThickness = isVaseMode ? 0.4 : parseFloat(controlsUI.thickness.value);
+            const bottomThickness = parseFloat(controlsUI.bottom.value);
+
+            const radialSegments = crossShape === 'polygon' ? polygonEdges : Math.max(48, segments * 2);
+            const heightSegments = style === 'lowpoly' ? 16 : 120;
+
+            const ringPointsExt = [];
+            for (let i = 0; i <= heightSegments; i++) {
+                const v = i / heightSegments;
+                const y = v * height;
+                const rFactor = getRadiusProfile(v, controlsUI.baseShape.value);
+                
+                const ring = [];
+                for (let j = 0; j <= radialSegments; j++) {
+                    const u = j / radialSegments;
+                    let theta = u * Math.PI * 2;
+                    let currentRadius = baseRadius * rFactor;
+
+                    if (crossShape === 'polygon') {
+                        const angleStep = (Math.PI * 2) / polygonEdges;
+                        const sector = Math.floor(theta / angleStep);
+                        const sectorAngle = theta - (sector + 0.5) * angleStep;
+                        const polyFactor = Math.cos(angleStep / 2) / Math.cos(sectorAngle);
+                        currentRadius *= polyFactor;
+                    } else if (crossShape === 'wave') {
+                        currentRadius += Math.sin(theta * 6) * 2.5;
+                    }
+
+                    if (style === 'strip') {
+                        currentRadius += Math.cos(theta * segments) * 2.0;
+                    } else if (style === 'lowpoly') {
+                        currentRadius += Math.sin(theta * 6) * 1.5;
+                    }
+
+                    if (j === radialSegments) {
+                        ring.push(ring[0].clone().setY(y));
+                    } else {
+                        ring.push(new THREE.Vector3(currentRadius * Math.cos(theta), y, currentRadius * Math.sin(theta)));
+                    }
+                }
+                ringPointsExt.push(ring);
+            }
+
+            const verts = [];
+            const inds = [];
+            let indexCounter = 0;
+
+            function addQuad(p1, p2, p3, p4) {
+                const idx = indexCounter;
+                verts.push(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, p3.x, p3.y, p3.z, p4.x, p4.y, p4.z);
+                inds.push(idx, idx + 1, idx + 2);
+                inds.push(idx, idx + 2, idx + 3);
+                indexCounter += 4;
+            }
+
+            for (let i = 0; i < heightSegments; i++) {
+                for (let j = 0; j < radialSegments; j++) {
+                    const p1 = ringPointsExt[i][j];
+                    const p2 = ringPointsExt[i][j + 1];
+                    const p3 = ringPointsExt[i + 1][j + 1];
+                    const p4 = ringPointsExt[i + 1][j];
+
+                    addQuad(p1, p4, p3, p2);
+
+                    if (!isVaseMode) {
+                        const baseR = baseRadius * getRadiusProfile(i / heightSegments, controlsUI.baseShape.value);
+                        const scaleIn = Math.max(0.1, (baseR - wallThickness) / baseR);
+                        addQuad(
+                            new THREE.Vector3(p1.x * scaleIn, p1.y, p1.z * scaleIn),
+                            new THREE.Vector3(p2.x * scaleIn, p2.y, p2.z * scaleIn),
+                            new THREE.Vector3(p3.x * scaleIn, p3.y, p3.z * scaleIn),
+                            new THREE.Vector3(p4.x * scaleIn, p4.y, p4.z * scaleIn)
+                        );
+                    }
+                }
+            }
+
+            if (!isVaseMode) {
+                const topI = heightSegments;
+                const topR = baseRadius * getRadiusProfile(1.0, controlsUI.baseShape.value);
+                const scaleInTop = Math.max(0.1, (topR - wallThickness) / topR);
+                for (let j = 0; j < radialSegments; j++) {
+                    const pExt1 = ringPointsExt[topI][j];
+                    const pExt2 = ringPointsExt[topI][j + 1];
+                    addQuad(
+                        pExt1, pExt2,
+                        new THREE.Vector3(pExt2.x * scaleInTop, pExt2.y, pExt2.z * scaleInTop),
+                        new THREE.Vector3(pExt1.x * scaleInTop, pExt1.y, pExt1.z * scaleInTop)
+                    );
+                }
+            }
+
+            const centerBottom = new THREE.Vector3(0, 0, 0);
+            for (let j = 0; j < radialSegments; j++) {
+                const p1 = ringPointsExt[0][j];
+                const p2 = ringPointsExt[0][j + 1];
+                const idx = indexCounter;
+                verts.push(centerBottom.x, centerBottom.y, centerBottom.z, p2.x, 0, p2.z, p1.x, 0, p1.z);
+                inds.push(idx, idx + 1, idx + 2);
+                indexCounter += 3;
+            }
+
+            const geom = new THREE.BufferGeometry();
+            geom.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
+            geom.setIndex(inds);
+            geom.computeVertexNormals();
+
+            vaseMaterial = new THREE.MeshStandardMaterial({
+                color: currentVaseColor,
+                roughness: 0.55,
+                metalness: 0.1,
+                side: THREE.DoubleSide
+            });
+
+            vaseMesh = new THREE.Mesh(geom, vaseMaterial);
+            scene.add(vaseMesh);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls3D.update();
+            renderer.render(scene, camera);
+        }
+
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            if (!vaseMesh) return;
+            const geometry = vaseMesh.geometry;
+            const positionAttr = geometry.attributes.position;
+            const indexAttr = geometry.index;
+            const numTriangles = indexAttr ? indexAttr.count / 3 : positionAttr.count / 3;
+            const bufferSize = 80 + 4 + (numTriangles * 50);
+            const arrayBuffer = new ArrayBuffer(bufferSize);
+            const dataView = new DataView(arrayBuffer);
+            
+            let offset = 80;
+            dataView.setUint32(offset, numTriangles, true);
+            offset += 4;
+
+            const pA = new THREE.Vector3(), pB = new THREE.Vector3(), pC = new THREE.Vector3(), cb = new THREE.Vector3(), ab = new THREE.Vector3();
+
+            const writeTriangle = (i1, i2, i3) => {
+                pA.set(positionAttr.getX(i1), positionAttr.getY(i1), positionAttr.getZ(i1));
+                pB.set(positionAttr.getX(i2), positionAttr.getY(i2), positionAttr.getZ(i2));
+                pC.set(positionAttr.getX(i3), positionAttr.getY(i3), positionAttr.getZ(i3));
+
+                ab.subVectors(pB, pA);
+                cb.subVectors(pC, pA);
+                cb.cross(ab).normalize();
+
+                dataView.setFloat32(offset, cb.x, true); offset += 4;
+                dataView.setFloat32(offset, cb.y, true); offset += 4;
+                dataView.setFloat32(offset, cb.z, true); offset += 4;
+                dataView.setFloat32(offset, pA.x, true); offset += 4;
+                dataView.setFloat32(offset, pA.y, true); offset += 4;
+                dataView.setFloat32(offset, pA.z, true); offset += 4;
+                dataView.setFloat32(offset, pB.x, true); offset += 4;
+                dataView.setFloat32(offset, pB.y, true); offset += 4;
+                dataView.setFloat32(offset, pB.z, true); offset += 4;
+                dataView.setFloat32(offset, pC.x, true); offset += 4;
+                dataView.setFloat32(offset, pC.y, true); offset += 4;
+                dataView.setFloat32(offset, pC.z, true); offset += 4;
+                dataView.setUint16(offset, 0, true); offset += 2;
+            };
+
+            if (indexAttr) {
+                for (let i = 0; i < indexAttr.count; i += 3) {
+                    writeTriangle(indexAttr.getX(i), indexAttr.getX(i + 1), indexAttr.getX(i + 2));
+                }
+            } else {
+                for (let i = 0; i < positionAttr.count; i += 3) {
+                    writeTriangle(i, i + 1, i + 2);
+                }
+            }
+
+            const blob = new Blob([arrayBuffer], { type: 'application/octet-stream' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `MLaser_Vaso_${controlsUI.baseShape.value}_${controlsUI.crossSection.value}_${controlsUI.textureStyle.value}.stl`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        init();
+    </script>
+</body>
+</html>
