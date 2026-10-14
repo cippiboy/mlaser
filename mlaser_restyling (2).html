@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLaser | Precisione Laser & Stampa 3D</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6 Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts: Space Grotesk + Inter + JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#080c14',
+                            darker: '#04070d',
+                            surface: '#0f172a',
+                            surfaceHover: '#1e293b',
+                            red: '#ef233c',         /* Rosso laser primario */
+                            redGlow: '#d90429',     /* Rosso laser profondo per bagliori */
+                            redLight: '#ff4d6d',
+                            cyan: '#00d2ff',        /* Ciano 3D FDM */
+                            cyanGlow: '#0ea5e9'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    },
+                    boxShadow: {
+                        'laser': '0 0 25px -3px rgba(239, 35, 60, 0.45)',
+                        'laser-lg': '0 0 50px -5px rgba(239, 35, 60, 0.65)',
+                        'cyan-glow': '0 0 25px -3px rgba(0, 210, 255, 0.45)',
+                        'card': '0 10px 30px -10px rgba(0, 0, 0, 0.7)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Griglia tech di sfondo in stile piano di taglio/stampa */
+        .bg-tech-grid {
+            background-size: 36px 36px;
+            background-image: 
+                linear-gradient(to right, rgba(239, 35, 60, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(239, 35, 60, 0.05) 1px, transparent 1px);
+        }
+        
+        .laser-beam-line {
+            background: linear-gradient(90deg, transparent, #ef233c, #ff4d6d, #ef233c, transparent);
+            box-shadow: 0 0 15px #ef233c;
+        }
+
+        .cyan-beam-line {
+            background: linear-gradient(90deg, transparent, #00d2ff, #7dd3fc, #00d2ff, transparent);
+            box-shadow: 0 0 15px #00d2ff;
+        }
+
+        /* Effetto bagliore al passaggio del mouse su card laser */
+        .laser-card-border {
+            position: relative;
+        }
+        .laser-card-border::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, rgba(239, 35, 60, 0.4), transparent, rgba(0, 210, 255, 0.2));
+            z-index: -1;
+            transition: opacity 0.3s ease;
+            opacity: 0.5;
+        }
+        .laser-card-border:hover::after {
+            opacity: 1;
+            background: linear-gradient(135deg, #ef233c, transparent, #00d2ff);
+        }
+
+        /* Pulsante animato con fascio laser */
+        @keyframes pulseLaser {
+            0%, 100% { opacity: 0.4; transform: scaleX(0.95); }
+            50% { opacity: 1; transform: scaleX(1.05); }
+        }
+        .animate-laser-pulse {
+            animation: pulseLaser 2.5s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-brand-darker text-slate-200 font-sans min-h-screen selection:bg-brand-red selection:text-white flex flex-col antialiased bg-tech-grid">
+
+    <!-- Barra di Navigazione Principale -->
+    <header class="sticky top-0 z-40 bg-brand-darker/90 backdrop-blur-md border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Logo Ufficiale MLaser Vettoriale con Fascio Rosso e Dettaglio 3D -->
+                <a href="#home" class="flex items-center gap-3.5 group">
+                    <div class="relative w-11 h-11 rounded-xl bg-gradient-to-br from-slate-900 to-black border-2 border-brand-red/80 flex items-center justify-center shadow-laser group-hover:scale-105 transition-transform duration-300">
+                        <!-- Simbolo SVG: 'M' stilizzata con punto laser ardente e linee wireframe -->
+                        <svg viewBox="0 0 100 100" class="w-7 h-7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Cubo 3D Ciano di supporto -->
+                            <path d="M50 18 L76 33 L76 67 L50 82 L24 67 L24 33 Z" stroke="#00d2ff" stroke-width="3" stroke-dasharray="4 2" opacity="0.4" />
+                            <!-- Lettera M geometrica in metallo e rosso -->
+                            <path d="M28 72 L28 32 L50 56 L72 32 L72 72" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+                            <!-- Fascio e Punto di messa a fuoco Laser Rosso ardente -->
+                            <circle cx="50" cy="56" r="5" fill="#ef233c" />
+                            <circle cx="50" cy="56" r="9" stroke="#ef233c" stroke-width="1.5" class="animate-ping opacity-75" />
+                        </svg>
+                        <!-- Luce laser in alto a sinistra del badge -->
+                        <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-brand-red shadow-[0_0_8px_#ef233c]"></span>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-1 font-display font-extrabold text-2xl tracking-wider">
+                            <span class="text-white">M</span><span class="text-brand-red drop-shadow-[0_0_12px_rgba(239,35,60,0.7)]">Laser</span>
+                        </div>
+                        <p class="text-[10px] uppercase font-mono tracking-widest text-slate-400 -mt-1 flex items-center gap-1.5">
+                            <span class="inline-block w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse"></span> Stampa 3D & Incisione
+                        </p>
+                    </div>
+                </a>
+
+                <!-- Navigazione Desktop -->
+                <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 text-sm font-medium">
+                    <a href="#servizi-3d" class="px-3.5 py-2 rounded-lg text-slate-300 hover:text-brand-cyan hover:bg-slate-800/60 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-cube text-brand-cyan text-xs"></i> 3D
+                    </a>
+                    <a href="#servizi-laser" class="px-3.5 py-2 rounded-lg text-slate-300 hover:text-brand-red hover:bg-slate-800/60 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-bolt text-brand-red text-xs"></i> Laser
+                    </a>
+                    <a href="#tools" class="px-3.5 py-2 rounded-lg text-slate-300 hover:text-amber-400 hover:bg-slate-800/60 transition flex items-center gap-1.5 relative">
+                        <i class="fa-solid fa-screwdriver-wrench text-amber-400 text-xs"></i> Tools
+                        <span class="text-[9px] bg-brand-red text-white font-bold px-1.5 py-0.2 rounded-full uppercase ml-1 animate-pulse">Novità</span>
+                    </a>
+                    <button onclick="apriGalleriaDedicata('3d')" class="px-3.5 py-2 rounded-lg text-slate-300 hover:text-brand-cyan hover:bg-slate-800/60 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group text-brand-cyan text-xs"></i> Galleria 3D
+                    </button>
+                    <button onclick="apriGalleriaDedicata('laser')" class="px-3.5 py-2 rounded-lg text-slate-300 hover:text-brand-red hover:bg-slate-800/60 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-fire text-brand-red text-xs"></i> Galleria Laser
+                    </button>
+                    <a href="#bio" class="px-3.5 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-astronaut text-xs"></i> Bio & Setup
+                    </a>
+                </nav>
+
+                <!-- Azione Contatto / Preventivo -->
+                <div class="hidden sm:flex items-center gap-3">
+                    <a href="#contatti" class="relative group overflow-hidden px-4 py-2 rounded-xl bg-gradient-to-r from-brand-red to-brand-redGlow text-white text-xs font-bold uppercase tracking-wider shadow-laser hover:shadow-laser-lg transition-all duration-300 flex items-center gap-2">
+                        <span class="absolute inset-0 w-full h-full bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                        <span>Richiedi Progetto</span>
+                    </a>
+                </div>
+
+                <!-- Toggle Menu Mobile -->
+                <button onclick="toggleMenuMobile()" class="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none">
+                    <i id="iconaMenu" class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Menu a comparsa Mobile -->
+        <div id="menuMobile" class="hidden md:hidden bg-brand-dark border-b border-slate-800 px-4 pt-2 pb-6 space-y-2 text-sm font-medium">
+            <a href="#servizi-3d" onclick="toggleMenuMobile()" class="block px-3 py-2.5 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-cube text-brand-cyan"></i> Stampa 3D
+            </a>
+            <a href="#servizi-laser" onclick="toggleMenuMobile()" class="block px-3 py-2.5 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-bolt text-brand-red"></i> Incisione Laser
+            </a>
+            <a href="#tools" onclick="toggleMenuMobile()" class="block px-3 py-2.5 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-screwdriver-wrench text-amber-400"></i> MLaser Tools <span class="text-[9px] bg-brand-red text-white font-bold px-1.5 py-0.5 rounded-full uppercase ml-1">Novità</span>
+            </a>
+            <button onclick="toggleMenuMobile(); apriGalleriaDedicata('3d')" class="w-full text-left px-3 py-2.5 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-layer-group text-brand-cyan"></i> Apri Finestra Galleria 3D
+            </button>
+            <button onclick="toggleMenuMobile(); apriGalleriaDedicata('laser')" class="w-full text-left px-3 py-2.5 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-fire text-brand-red"></i> Apri Finestra Galleria Laser
+            </button>
+            <a href="#bio" onclick="toggleMenuMobile()" class="block px-3 py-2.5 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-user-astronaut"></i> Chi Sono & Il Laboratorio
+            </a>
+            <a href="#contatti" onclick="toggleMenuMobile()" class="block text-center mt-3 py-2.5 rounded-xl bg-brand-red text-white font-bold uppercase tracking-wider">
+                Contatta Mauro
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section con contrasto Rosso Laser e Ciano 3D -->
+    <section id="home" class="relative pt-16 pb-24 md:pt-28 md:pb-36 overflow-hidden">
+        
+        <!-- Bagliori di sfondo in stile fascio di luce -->
+        <div class="absolute top-1/4 -left-32 w-96 h-96 bg-brand-red/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute top-1/3 -right-32 w-96 h-96 bg-brand-cyan/15 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            
+            <!-- Badge superiore con luce laser rossa pulsante -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/90 border border-brand-red/50 text-slate-300 text-xs font-mono mb-8 shadow-laser">
+                <span class="w-2 h-2 rounded-full bg-brand-red animate-ping"></span>
+                <span class="font-bold text-white uppercase tracking-wider">Precisione Laser</span>
+                <span class="text-slate-600">|</span>
+                <span class="text-brand-cyan font-bold uppercase tracking-wider">Visione 3D</span>
+            </div>
+
+            <!-- Titolo Principale in Space Grotesk -->
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-display font-extrabold text-white tracking-tight leading-tight max-w-4xl mx-auto mb-6">
+                Dal bit all'atomo.<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-red via-brand-redLight to-orange-400 drop-shadow-[0_0_20px_rgba(239,35,60,0.4)]">
+                    Incisione Laser
+                </span> &amp; 
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-sky-400">
+                    Fabbricazione 3D
+                </span>
+            </h1>
+
+            <!-- Linea fascio Laser animata -->
+            <div class="w-48 h-0.5 mx-auto laser-beam-line rounded-full mb-8 animate-laser-pulse"></div>
+
+            <p class="text-slate-400 text-base sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
+                Laboratorio hobbistico artigianale di fabbricazioni digitali a cura di Mauro. 
+                Nessuna produzione anonima in serie: ogni pezzo, ricambio introvabile o regalo personalizzato nasce con cura millimetrica e passione autentica.
+            </p>
+
+            <!-- Pulsanti Principali Hero -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button onclick="apriGalleriaDedicata('3d')" class="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-gradient-to-r from-sky-600 to-cyan-500 hover:from-sky-500 hover:to-cyan-400 text-white font-bold text-sm uppercase tracking-wider shadow-cyan-glow transition duration-300 flex items-center justify-center gap-2 group">
+                    <i class="fa-solid fa-cube text-xs"></i>
+                    <span>Esplora Portfolio 3D</span>
+                </button>
+                <button onclick="apriGalleriaDedicata('laser')" class="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-gradient-to-r from-brand-red to-brand-redGlow text-white font-bold text-sm uppercase tracking-wider shadow-laser hover:shadow-laser-lg transition duration-300 flex items-center justify-center gap-2 group">
+                    <i class="fa-solid fa-bolt text-xs"></i>
+                    <span>Esplora Portfolio Laser</span>
+                </button>
+                <a href="#tools" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 hover:border-brand-red/50 font-bold text-sm uppercase tracking-wider transition duration-300 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-calculator text-amber-400"></i>
+                    <span>MLaser Tools</span>
+                </a>
+            </div>
+
+            <!-- Mini Spec bar: Attrezzatura di punta -->
+            <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-8 border-t border-slate-800/80 text-left">
+                <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800">
+                    <span class="text-[10px] font-mono text-slate-400 uppercase block">Tecnologia FDM</span>
+                    <p class="text-xs sm:text-sm font-bold text-white mt-0.5">2x Bambu Lab A1 Combo</p>
+                </div>
+                <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800 border-l-brand-red/80">
+                    <span class="text-[10px] font-mono text-brand-red uppercase block">Incisione &amp; Taglio</span>
+                    <p class="text-xs sm:text-sm font-bold text-white mt-0.5">Enjoywood CEL-E10 (10W)</p>
+                </div>
+                <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800">
+                    <span class="text-[10px] font-mono text-brand-cyan uppercase block">Materiali 3D</span>
+                    <p class="text-xs sm:text-sm font-bold text-white mt-0.5">PLA, PETG, TPU Funzionale</p>
+                </div>
+                <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800">
+                    <span class="text-[10px] font-mono text-amber-400 uppercase block">Supporti Laser</span>
+                    <p class="text-xs sm:text-sm font-bold text-white mt-0.5">Legno, Ardesia, Pelle, Metalli</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Sezione Servizi a Scheda: Le Lavorazioni -->
+    <section id="lavorazioni" class="py-20 bg-brand-dark border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <span class="text-xs font-mono text-brand-red uppercase tracking-widest font-bold">Cosa Facciamo</span>
+                <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-white mt-2">Le Lavorazioni in Officina</h2>
+                <p class="text-slate-400 text-sm mt-3">Due anime tecnologiche complementari per trasformare file vettoriali e modelli digitali in manufatti reali.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                
+                <!-- Card Stampa 3D (Ciano) -->
+                <div id="servizi-3d" class="bg-slate-900/80 rounded-2xl p-8 border border-slate-800 hover:border-brand-cyan/60 transition-all duration-300 relative group flex flex-col justify-between shadow-card">
+                    <div class="absolute -top-3 right-8 bg-sky-950 text-brand-cyan text-[11px] font-mono font-bold px-3 py-1 rounded-full border border-sky-600/50 flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group text-[10px]"></i> Layer 0.12 - 0.20mm
+                    </div>
+
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-cyan-950/60 border border-brand-cyan/40 text-brand-cyan flex items-center justify-center text-2xl mb-6 shadow-cyan-glow group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-cube"></i>
+                        </div>
+
+                        <h3 class="text-2xl font-display font-bold text-white mb-3">Stampa 3D FDM Multifilamento</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                            Grazie al doppio setup con le <strong class="text-white">Bambu Lab A1 Combo</strong> e gestione multicolore avanzata, stampiamo con tolleranze strette per ricambi tecnici e prototipi estetici indistruttibili.
+                        </p>
+
+                        <ul class="space-y-2.5 text-xs text-slate-300 font-mono mb-8">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-cyan"></i> <strong>Ricambi Introvabili:</strong> Ingranaggi, clip per elettrodomestici, supporti rotti.</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-cyan"></i> <strong>Materiali Tecnici:</strong> PETG ad alta resistenza termica, PLA Matt estetico.</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-cyan"></i> <strong>Modellazione CAD:</strong> Rilievo misure con calibro e ridisegno CAD da zero.</li>
+                        </ul>
+                    </div>
+
+                    <div class="pt-6 border-t border-slate-800 flex items-center justify-between">
+                        <button onclick="apriGalleriaDedicata('3d')" class="px-4 py-2 rounded-xl bg-cyan-950/70 hover:bg-cyan-900/90 text-brand-cyan hover:text-white border border-brand-cyan/40 font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all shadow-sm">
+                            <i class="fa-solid fa-window-restore text-xs"></i>
+                            <span>Apri Galleria Lavori 3D</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                        <span class="text-[10px] text-slate-500 font-mono">Bambu Lab Tech</span>
+                    </div>
+                </div>
+
+                <!-- Card Incisione Laser (Rosso Laser) -->
+                <div id="servizi-laser" class="bg-slate-900/80 rounded-2xl p-8 border border-slate-800 hover:border-brand-red/70 transition-all duration-300 relative group flex flex-col justify-between shadow-card laser-card-border">
+                    <div class="absolute -top-3 right-8 bg-rose-950 text-brand-red text-[11px] font-mono font-bold px-3 py-1 rounded-full border border-brand-red/50 flex items-center gap-1.5 shadow-laser">
+                        <i class="fa-solid fa-fire-flame-curved text-[10px]"></i> 10W Pure Beam
+                    </div>
+
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-rose-950/60 border border-brand-red/50 text-brand-red flex items-center justify-center text-2xl mb-6 shadow-laser group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+
+                        <h3 class="text-2xl font-display font-bold text-white mb-3">Incisione &amp; Taglio Laser</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                            Il raggio a diodo concentrato della nostra <strong class="text-white">Enjoywood CEL-E10</strong> permette marcature a fuoco indelebili e tagli millimetrici su superfici organiche e metalli trattati.
+                        </p>
+
+                        <ul class="space-y-2.5 text-xs text-slate-300 font-mono mb-8">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-red"></i> <strong>Ardesia Naturale:</strong> Sottobicchieri e targhe con contrasto bianco/grigio a fuoco.</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-red"></i> <strong>Legno Pregiato:</strong> Rovere, faggio e multistrato di betulla sagomato.</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-red"></i> <strong>Pelle &amp; Cuoio:</strong> Portachiavi e accessori marchiati per regali unici.</li>
+                        </ul>
+                    </div>
+
+                    <div class="pt-6 border-t border-slate-800 flex items-center justify-between">
+                        <button onclick="apriGalleriaDedicata('laser')" class="px-4 py-2 rounded-xl bg-rose-950/70 hover:bg-rose-900/90 text-brand-red hover:text-white border border-brand-red/50 font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all shadow-laser">
+                            <i class="fa-solid fa-window-restore text-xs"></i>
+                            <span>Apri Galleria Incisioni Laser</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                        <span class="text-[10px] text-slate-500 font-mono">Enjoywood 10W</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Sezione Novità: MLaser Tools (Tool Interattivo per Stime e Calcoli Maker) -->
+    <section id="tools" class="py-20 bg-brand-darker relative border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono mb-3">
+                        <i class="fa-solid fa-wrench"></i> Utilità per Makers &amp; Clienti
+                    </div>
+                    <h2 class="text-3xl font-display font-bold text-white">MLaser Tools <span class="text-xs bg-brand-red text-white px-2 py-0.5 rounded-full font-mono uppercase font-bold ml-2">Novità</span></h2>
+                    <p class="text-slate-400 text-sm mt-1">Calcola istantaneamente il peso del filamento o stima i parametri per la tua lavorazione personalizzata.</p>
+                </div>
+            </div>
+
+            <!-- Card Calcolatore Interattivo -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-4xl mx-auto shadow-2xl">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-calculator text-brand-red"></i> Stima Rapida Materiale 3D
+                        </h3>
+                        <p class="text-xs text-slate-400 mb-6">Inserisci i grammi stimati dallo slicer o le dimensioni approssimative per calcolare il fabbisogno di filamento.</p>
+
+                        <div class="space-y-4 text-xs font-mono">
+                            <div>
+                                <label class="block text-slate-300 font-bold mb-1">Tipologia di Materiale:</label>
+                                <select id="toolMateriale" onchange="calcolaStimaTool()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200 focus:border-brand-red focus:outline-none">
+                                    <option value="PLA">PLA Standard (Densità 1.24 g/cm³)</option>
+                                    <option value="PETG">PETG Resistente (Densità 1.27 g/cm³)</option>
+                                    <option value="TPU">TPU Flessibile (Densità 1.21 g/cm³)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-slate-300 font-bold mb-1">Peso stimato dallo Slicer (grammi):</label>
+                                <input type="number" id="toolGrammi" value="85" min="1" max="2000" oninput="calcolaStimaTool()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200 focus:border-brand-red focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-slate-300 font-bold mb-1">Altezza Layer Desiderata:</label>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <button type="button" onclick="setLayerTool(0.12, this)" class="btn-layer py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:border-brand-red">0.12mm (Ultra)</button>
+                                    <button type="button" onclick="setLayerTool(0.16, this)" class="btn-layer py-2 rounded-lg bg-brand-red text-white font-bold border border-brand-red">0.16mm (Ottimale)</button>
+                                    <button type="button" onclick="setLayerTool(0.20, this)" class="btn-layer py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:border-brand-red">0.20mm (Rapido)</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Risultato del Calcolatore Tool -->
+                    <div class="bg-slate-950 rounded-xl p-6 border border-slate-800 flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] font-mono uppercase text-brand-red tracking-wider font-bold block mb-1">Riepilogo Parametri MLaser</span>
+                            <h4 class="text-xl font-display font-bold text-white mb-4">Profilo di Produzione</h4>
+
+                            <div class="space-y-3 text-xs">
+                                <div class="flex justify-between py-2 border-b border-slate-800/80">
+                                    <span class="text-slate-400">Metri di filamento necessari:</span>
+                                    <span id="risultatoMetri" class="font-mono font-bold text-brand-cyan">~28.5 m</span>
+                                </div>
+                                <div class="flex justify-between py-2 border-b border-slate-800/80">
+                                    <span class="text-slate-400">Macchina consigliata:</span>
+                                    <span class="font-mono font-bold text-white">Bambu Lab A1</span>
+                                </div>
+                                <div class="flex justify-between py-2 border-b border-slate-800/80">
+                                    <span class="text-slate-400">Finitura superficiale:</span>
+                                    <span id="risultatoFinitura" class="font-mono font-bold text-slate-200">Alta risoluzione</span>
+                                </div>
+                                <div class="flex justify-between py-2">
+                                    <span class="text-slate-400">Idoneità Meccanica:</span>
+                                    <span id="risultatoIdoneita" class="font-mono font-bold text-emerald-400">Ottima per interni</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-4 border-t border-slate-800">
+                            <button onclick="copiaDatiToolPerPreventivo()" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-mono text-xs font-bold border border-slate-700 flex items-center justify-center gap-2 transition">
+                                <i class="fa-solid fa-copy text-brand-red"></i>
+                                <span id="btnCopiaTesto">Invia questi dati a Mauro</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Sezione Hub Vetrine: Accesso Separato ai Due Archivi per non appesantire la Home -->
+    <section id="archivi-lavori" class="py-20 bg-brand-dark border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-xs font-mono text-brand-red uppercase tracking-widest font-bold">Archivio Fabbricazioni</span>
+                <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-white mt-2">I Portfolio di MLaser</h2>
+                <p class="text-slate-400 text-sm mt-3">Per garantire la massima pulizia e velocità, le lavorazioni 3D e le incisioni laser sono organizzate in due finestre dedicate separate.</p>
+            </div>
+
+            <!-- Griglia Hub a due corsie indipendenti -->
+            <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                
+                <!-- Finestra Card Stampa 3D -->
+                <div class="bg-gradient-to-b from-slate-900 to-slate-950 p-6 sm:p-8 rounded-2xl border border-slate-800 hover:border-brand-cyan/60 transition-all duration-300 relative group shadow-card flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-[11px] font-mono text-brand-cyan bg-cyan-950/70 border border-brand-cyan/40 px-3 py-1 rounded-full font-bold">
+                                <i class="fa-solid fa-cube mr-1"></i> Finestra Dedicata 3D
+                            </span>
+                            <span id="badgeCount3dHub" class="text-xs font-mono text-slate-400">3 Lavorazioni</span>
+                        </div>
+                        <h3 class="text-2xl font-display font-bold text-white mb-2">Archivio Prototipi &amp; Ricambi FDM</h3>
+                        <p class="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6">
+                            Esplora stampe tecniche con tolleranze centesimali, ingranaggi su misura, supporti antipiega e finiture multicolore AMS.
+                        </p>
+                        
+                        <!-- Mini anteprime thumbnail -->
+                        <div class="grid grid-cols-3 gap-2 mb-6">
+                            <div class="aspect-square rounded-lg bg-slate-950 border border-slate-800 overflow-hidden">
+                                <img src="https://placehold.co/300x300/0f172a/00d2ff?text=Ricambi+PETG" alt="3D 1" class="w-full h-full object-cover">
+                            </div>
+                            <div class="aspect-square rounded-lg bg-slate-950 border border-slate-800 overflow-hidden">
+                                <img src="https://placehold.co/300x300/0f172a/00d2ff?text=Bocchetta" alt="3D 2" class="w-full h-full object-cover">
+                            </div>
+                            <div class="aspect-square rounded-lg bg-slate-950 border border-slate-800 overflow-hidden">
+                                <img src="https://placehold.co/300x300/0f172a/00d2ff?text=Guide+Cavo" alt="3D 3" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="apriGalleriaDedicata('3d')" class="w-full py-3.5 rounded-xl bg-slate-800 hover:bg-brand-cyan hover:text-slate-950 text-brand-cyan font-bold text-xs uppercase tracking-wider border border-brand-cyan/40 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-up-right-from-square"></i>
+                        <span>Apri Finestra Portfolio 3D</span>
+                    </button>
+                </div>
+
+                <!-- Finestra Card Incisione Laser -->
+                <div class="bg-gradient-to-b from-slate-900 to-slate-950 p-6 sm:p-8 rounded-2xl border border-slate-800 hover:border-brand-red/70 transition-all duration-300 relative group shadow-card flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-[11px] font-mono text-brand-red bg-rose-950/70 border border-brand-red/50 px-3 py-1 rounded-full font-bold">
+                                <i class="fa-solid fa-fire mr-1"></i> Finestra Dedicata Laser
+                            </span>
+                            <span id="badgeCountLaserHub" class="text-xs font-mono text-slate-400">3 Lavorazioni</span>
+                        </div>
+                        <h3 class="text-2xl font-display font-bold text-white mb-2">Archivio Incisioni &amp; Tagli Laser</h3>
+                        <p class="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6">
+                            Scopri le marcature fotografiche su ardesia, insegne in legno di rovere naturale e lavorazioni in pelle a fuoco.
+                        </p>
+                        
+                        <!-- Mini anteprime thumbnail -->
+                        <div class="grid grid-cols-3 gap-2 mb-6">
+                            <div class="aspect-square rounded-lg bg-slate-950 border border-slate-800 overflow-hidden">
+                                <img src="https://placehold.co/300x300/0f172a/ef233c?text=Ardesia+10W" alt="Laser 1" class="w-full h-full object-cover">
+                            </div>
+                            <div class="aspect-square rounded-lg bg-slate-950 border border-slate-800 overflow-hidden">
+                                <img src="https://placehold.co/300x300/0f172a/ef233c?text=Rovere+Massello" alt="Laser 2" class="w-full h-full object-cover">
+                            </div>
+                            <div class="aspect-square rounded-lg bg-slate-950 border border-slate-800 overflow-hidden">
+                                <img src="https://placehold.co/300x300/0f172a/ef233c?text=Vero+Cuoio" alt="Laser 3" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="apriGalleriaDedicata('laser')" class="w-full py-3.5 rounded-xl bg-slate-800 hover:bg-brand-red hover:text-white text-brand-red font-bold text-xs uppercase tracking-wider border border-brand-red/40 transition-all flex items-center justify-center gap-2 shadow-laser">
+                        <i class="fa-solid fa-up-right-from-square"></i>
+                        <span>Apri Finestra Portfolio Laser</span>
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Sezione Bio & Setup Officina: La storia di Mauro -->
+    <section id="bio" class="py-20 bg-brand-darker border-t border-slate-800 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Colonna Sinistra: Testo e Missione -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-700 text-xs font-mono text-brand-red">
+                        <i class="fa-solid fa-heart text-brand-red"></i> Dalla Passione all'Officina
+                    </div>
+
+                    <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-white leading-tight">
+                        "Non produrre in serie, ma creare con anima."
+                    </h2>
+
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                        Ciao! Mi chiamo <strong class="text-white">Mauro</strong> e sono l'anima creativa e tecnica dietro <strong class="text-brand-red">MLaser</strong>.
+                        Quello che vedi oggi non è nato come un business freddo, ma come una sfida personale: esplorare i confini tra l'immaginazione digitale e l'oggetto fisico reale.
+                    </p>
+
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Ho iniziato anni fa con una ormai eroica stampante 3D <span class="text-slate-200">Creality CR10S</span>, imparando a calibrare ogni suo singolo bullone. Da lì, la curiosità mi ha spinto verso l'incisione laser, scoprendo come un raggio di luce potesse trasformare un semplice pezzo di legno in un'opera irripetibile.
+                    </p>
+
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Oggi nel mio laboratorio aiuto amici, makers e le mie due figlie a dare vita ai loro progetti: che si tratti di un ricambio meccanico per un robot da cucina o di una targa personalizzata in ardesia, dedico a ciascuno la stessa cura millimetrica.
+                    </p>
+
+                    <div class="pt-4 flex flex-wrap gap-4 text-xs font-mono">
+                        <div class="flex items-center gap-2 bg-slate-900 px-3 py-2 rounded-lg border border-slate-800">
+                            <i class="fa-solid fa-ruler-combined text-brand-cyan"></i> Precisione al centesimo
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-900 px-3 py-2 rounded-lg border border-slate-800">
+                            <i class="fa-solid fa-screwdriver text-brand-red"></i> Ridisegno CAD Custom
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-900 px-3 py-2 rounded-lg border border-slate-800">
+                            <i class="fa-solid fa-house-chimney text-amber-400"></i> Laboratorio Hobbistico Italiano
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Colonna Destra: Il Setup Tecnologico di MLaser -->
+                <div class="lg:col-span-5">
+                    <div class="bg-slate-900 border-2 border-slate-800 hover:border-brand-red/60 rounded-2xl p-6 sm:p-8 shadow-2xl relative">
+                        <div class="absolute -top-3 right-6 bg-brand-red text-white text-[10px] font-mono font-bold px-3 py-0.5 rounded-full uppercase tracking-wider shadow-laser">
+                            Setup Officina
+                        </div>
+
+                        <h3 class="text-xl font-display font-bold text-white mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-microchip text-brand-red"></i> L'Attrezzatura di MLaser
+                        </h3>
+
+                        <div class="space-y-4 font-mono text-xs">
+                            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                                <span class="text-slate-500 block text-[10px] uppercase">Parco Stampa 3D FDM</span>
+                                <span class="text-white font-bold text-sm">nr. 2 Bambu Lab A1 Combo</span>
+                                <p class="text-slate-400 text-[11px] mt-0.5">Sistemi AMS per stampe multicolore ad alta precisione fino a 500 mm/s.</p>
+                            </div>
+
+                            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                                <span class="text-brand-red block text-[10px] uppercase font-bold">Unità Laser a Diodo</span>
+                                <span class="text-white font-bold text-sm">Enjoywood CEL-E10 da 10W</span>
+                                <p class="text-slate-400 text-[11px] mt-0.5">Punto focale compresso da 0.06mm per incisioni fotografiche su ardesia e legno.</p>
+                            </div>
+
+                            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                                <span class="text-brand-cyan block text-[10px] uppercase">Software &amp; CAD</span>
+                                <span class="text-slate-200 font-bold">Tinkercad, Lightburn, Meshmixer, 3ds Max</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-4 border-t border-slate-800 text-center">
+                            <a href="#contatti" class="inline-block text-xs font-mono text-brand-red hover:text-white transition">
+                                Vuoi chiedere informazioni sulla fattibilità di un pezzo? &rarr;
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Sezione Contatti e Richiesta Lavorazione -->
+    <section id="contatti" class="py-20 bg-brand-dark border-t border-slate-800">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            
+            <div class="w-16 h-16 rounded-2xl bg-brand-red/10 border border-brand-red/40 text-brand-red flex items-center justify-center text-3xl mx-auto mb-6 shadow-laser">
+                <i class="fa-solid fa-paper-plane"></i>
+            </div>
+
+            <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-white mb-4">Hai un progetto o un ricambio da riparare?</h2>
+            <p class="text-slate-400 text-sm max-w-xl mx-auto mb-8">
+                Inviami una foto dell'oggetto rotto con le dimensioni, oppure un file vettoriale (.SVG / .DXF / .STL). 
+                Ti risponderò direttamente con un parere tecnico sulla fattibilità.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <!-- Contatto WhatsApp Diretto -->
+                <a href="https://wa.me/?text=Ciao%20Mauro%2C%20ti%20contatto%20da%20MLaser.it%20per%20un%20progetto" target="_blank" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm uppercase tracking-wider shadow-lg transition flex items-center justify-center gap-2.5">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                    <span>Scrivimi su WhatsApp</span>
+                </a>
+                
+                <!-- Email Diretta -->
+                <a href="mailto:info@mlaser.it?subject=Richiesta%20Progetto%20MLaser" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm uppercase tracking-wider border border-slate-700 transition flex items-center justify-center gap-2.5">
+                    <i class="fa-solid fa-envelope text-brand-red"></i>
+                    <span>Email: info@mlaser.it</span>
+                </a>
+            </div>
+
+            <p class="text-[11px] text-slate-500 font-mono mt-6">
+                Laboratorio hobbistico privato · Risposta rapida · Nessun quantitativo minimo richiesto
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer Istituzionale MLaser con Rosso e Ciano -->
+    <footer class="bg-brand-darker border-t border-slate-900 py-12 text-slate-500 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+            
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-slate-900 border border-brand-red/60 flex items-center justify-center">
+                    <span class="text-white font-bold font-display text-sm">M</span>
+                </div>
+                <div>
+                    <span class="text-white font-bold font-display text-base tracking-wide">M<span class="text-brand-red">Laser</span></span>
+                    <p class="text-[10px] text-slate-500">Creato con passione nel laboratorio MLaser Lab.</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-6 font-mono text-[11px]">
+                <a href="#home" class="hover:text-slate-300">Home</a>
+                <a href="#servizi-3d" class="hover:text-slate-300">Stampa 3D</a>
+                <a href="#servizi-laser" class="hover:text-slate-300">Incisione Laser</a>
+                <a href="#tools" class="hover:text-slate-300">Tools</a>
+                <a href="#bio" class="hover:text-slate-300">Bio</a>
+            </div>
+
+            <div class="text-[11px] font-mono">
+                &copy; <span id="currentYear">2026</span> MLaser.it · Precisione Laser &amp; Fabbricazione 3D
+            </div>
+        </div>
+    </footer>
+
+    <!-- FINESTRA DEDICATA A COMPARSA PER GALLERIA (3D OPPURE LASER) -->
+    <div id="finestraGalleriaDedicata" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl hidden flex-col overflow-hidden animate-fadeIn">
+        
+        <!-- Barra di controllo superiore della finestra dedicata -->
+        <div class="w-full bg-slate-950/95 border-b border-slate-800 px-4 sm:px-8 py-4 flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-3">
+                <div id="finestraIconaBadge" class="w-10 h-10 rounded-xl flex items-center justify-center text-lg shadow-lg"></div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h3 id="finestraTitolo" class="text-lg sm:text-xl font-display font-extrabold text-white"></h3>
+                        <span id="finestraPillolaTipo" class="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full uppercase"></span>
+                    </div>
+                    <p id="finestraSottotitolo" class="text-xs text-slate-400 font-mono hidden sm:block"></p>
+                </div>
+            </div>
+
+            <!-- Tasti cambio rapido finestra & chiusura -->
+            <div class="flex items-center gap-2 sm:gap-4">
+                <!-- Selettore rapido 3D / Laser all'interno della finestra -->
+                <div class="bg-slate-900 p-1 rounded-xl border border-slate-800 flex items-center text-xs font-mono">
+                    <button id="btnSwitch3d" onclick="switchFinestraGalleria('3d')" class="px-3 py-1.5 rounded-lg transition font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-cube text-xs"></i> <span>3D</span>
+                    </button>
+                    <button id="btnSwitchLaser" onclick="switchFinestraGalleria('laser')" class="px-3 py-1.5 rounded-lg transition font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-bolt text-xs"></i> <span>Laser</span>
+                    </button>
+                </div>
+
+                <!-- Pulsante di Chiusura Finestra -->
+                <button onclick="chiudiGalleriaDedicata()" class="w-10 h-10 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center border border-slate-700 transition" title="Chiudi Finestra">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Barra di ricerca e filtri dedicati all'interno della finestra -->
+        <div class="bg-slate-900/60 border-b border-slate-800/80 px-4 sm:px-8 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+            <div class="relative w-full sm:w-80">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+                <input type="text" id="inputCercaFinestra" oninput="filtraElementiFinestra()" placeholder="Cerca materiale, ricambio o tecnica..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-red">
+            </div>
+
+            <div id="filtriSecondariFinestra" class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 text-xs">
+                <!-- Generati dinamicamente via JS -->
+            </div>
+        </div>
+
+        <!-- Contenuto scrollabile con la griglia dei lavori dedicati -->
+        <div class="flex-grow overflow-y-auto px-4 sm:px-8 py-6 sm:py-8 bg-tech-grid">
+            <div class="max-w-7xl mx-auto">
+                <div id="grigliaFinestraDedicata" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <!-- Cards inserite dinamicamente -->
+                </div>
+
+                <div id="vuotoFinestraDedicata" class="hidden text-center py-20 bg-slate-900/40 rounded-2xl border border-slate-800">
+                    <i class="fa-solid fa-box-open text-4xl text-slate-600 mb-3"></i>
+                    <p class="text-slate-400 text-sm">Nessuna lavorazione trovata con questi filtri.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer rapido della finestra dedicata -->
+        <div class="bg-slate-950 border-t border-slate-800 px-4 sm:px-8 py-3 flex items-center justify-between text-[11px] font-mono text-slate-400 shrink-0">
+            <span><i class="fa-regular fa-keyboard mr-1"></i> Premi <kbd class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700">ESC</kbd> per chiudere la finestra</span>
+            <button onclick="chiudiGalleriaDedicata()" class="text-brand-red hover:underline font-bold">Torna al Sito Principale &rarr;</button>
+        </div>
+
+    </div>
+
+    <!-- Modale Dettaglio Lavoro (Lightbox) -->
+    <div id="modalDettaglioLavoro" class="fixed inset-0 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4 z-50 transition-opacity">
+        <div class="bg-slate-900 border border-slate-800 max-w-2xl w-full rounded-2xl overflow-hidden shadow-2xl relative text-left">
+            <button onclick="chiudiModalLavoro()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center border border-slate-700 z-10">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <div class="grid sm:grid-cols-2">
+                <div class="h-64 sm:h-full bg-slate-950 overflow-hidden relative">
+                    <img id="modalImgLavoro" src="" alt="" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x600/1e293b/ef233c?text=Foto+MLaser'">
+                </div>
+                <div class="p-6 flex flex-col justify-between">
+                    <div>
+                        <span id="modalBadgeLavoro" class="inline-block px-2.5 py-1 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider mb-3"></span>
+                        <h3 id="modalTitoloLavoro" class="text-xl font-display font-bold text-white mb-2"></h3>
+                        <p id="modalDescrizioneLavoro" class="text-slate-400 text-xs leading-relaxed mb-4"></p>
+                        
+                        <div class="space-y-2 text-xs font-mono border-t border-slate-800 pt-3">
+                            <div><strong class="text-slate-300">Materiale:</strong> <span id="modalMaterialeLavoro" class="text-slate-400"></span></div>
+                            <div><strong class="text-slate-300">Tecnica:</strong> <span id="modalTecnicaLavoro" class="text-slate-400"></span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-6 mt-4 border-t border-slate-800">
+                        <a id="btnRichiediSimile" href="#contatti" onclick="chiudiModalLavoro()" class="w-full block text-center py-2.5 rounded-xl bg-gradient-to-r from-brand-red to-brand-redGlow text-white font-bold text-xs uppercase tracking-wider shadow-laser hover:shadow-laser-lg transition">
+                            Richiedi una lavorazione simile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Anno footer dinamico
+        document.getElementById('currentYear').innerText = new Date().getFullYear();
+
+        // Menu Mobile Toggle
+        window.toggleMenuMobile = function() {
+            const menu = document.getElementById('menuMobile');
+            const icona = document.getElementById('iconaMenu');
+            menu.classList.toggle('hidden');
+            if (menu.classList.contains('hidden')) {
+                icona.className = 'fa-solid fa-bars text-xl';
+            } else {
+                icona.className = 'fa-solid fa-xmark text-xl text-brand-red';
+            }
+        };
+
+        // Catalogo di lavorazioni predefinite con i veri dati di MLaser
+        const catalogoLocale = [
+            {
+                id: "1",
+                titolo: "Ingranaggio Rinforzato con Calibro",
+                categoria: "3d",
+                categoriaSecondaria: "ricambi",
+                materiale: "PETG Nero Carbon-Look",
+                tecnica: "Bambu Lab A1 (layer 0.16mm)",
+                descrizione: "Ricambio per robot da cucina introvabile sul mercato. Ridisegnato e stampato con tolleranza centesimale.",
+                img: "https://placehold.co/600x600/0f172a/00d2ff?text=Ingranaggio+PETG"
+            },
+            {
+                id: "2",
+                titolo: "Sottobicchieri in Ardesia Naturale",
+                categoria: "laser",
+                categoriaSecondaria: null,
+                materiale: "Pietra di Ardesia Naturale Spaccata",
+                tecnica: "Incisione Laser Enjoywood 10W",
+                descrizione: "Set personalizzato con logo geometrico inciso a fuoco, resistente a calore e liquidi senza alterarsi.",
+                img: "https://placehold.co/600x600/0f172a/ef233c?text=Ardesia+Laser+10W"
+            },
+            {
+                id: "3",
+                titolo: "Targa da Banco in Rovere Massello",
+                categoria: "laser",
+                categoriaSecondaria: null,
+                materiale: "Legno di Rovere Naturale",
+                tecnica: "Taglio & Marcatura Laser Profonda",
+                descrizione: "Insegna artigianale con venature naturali esaltate dalla combustione controllata del raggio laser.",
+                img: "https://placehold.co/600x600/0f172a/ef233c?text=Targa+Rovere+Laser"
+            },
+            {
+                id: "4",
+                titolo: "Bocchetta Aspirazione Officina",
+                categoria: "3d",
+                categoriaSecondaria: "ricambi",
+                materiale: "PETG Termoresistente",
+                tecnica: "Stampa 3D Funzionale Robusta",
+                descrizione: "Adattatore conico con attacco a baionetta rapido per collegare elettroutensili al tubo dell'aspiratore.",
+                img: "https://placehold.co/600x600/0f172a/00d2ff?text=Bocchetta+Aspiratore"
+            },
+            {
+                id: "5",
+                titolo: "Portachiavi in Cuoio Conciato",
+                categoria: "laser",
+                categoriaSecondaria: null,
+                materiale: "Vero Cuoio Italiano",
+                tecnica: "Incisione Vettoriale a Diodo",
+                descrizione: "Lotto per regali personalizzati con incisione nominativa a fuoco, rifinito a mano nei bordi.",
+                img: "https://placehold.co/600x600/0f172a/ef233c?text=Cuoio+Inciso+Laser"
+            },
+            {
+                id: "6",
+                titolo: "Supporto Cavo per Stampanti 3D",
+                categoria: "3d",
+                categoriaSecondaria: "ricambi",
+                materiale: "PLA Matt Grafite",
+                tecnica: "Stampa 3D FDM",
+                descrizione: "Guida passacavo antipiega per l'estrusore con clip a scatto per proteggere il cablaggio elettrico.",
+                img: "https://placehold.co/600x600/0f172a/00d2ff?text=Supporto+Cavo+3D"
+            }
+        ];
+
+        let catalogoLavori = [...catalogoLocale];
+        let categoriaAttiva = 'tutti';
+        let limiteIniziale = 4;
+        let mostratiTutti = false;
+
+        let finestraTipoAttivo = '3d';
+        let sottocategoriaFinestra = 'tutti';
+
+        window.apriGalleriaDedicata = function(tipo) {
+            finestraTipoAttivo = tipo;
+            sottocategoriaFinestra = 'tutti';
+            const finestra = document.getElementById('finestraGalleriaDedicata');
+            if (!finestra) return;
+
+            document.body.classList.add('overflow-hidden');
+            finestra.classList.remove('hidden');
+            finestra.classList.add('flex');
+
+            aggiornaIntestazioneFinestra();
+            renderizzaFinestraDedicata();
+        };
+
+        window.chiudiGalleriaDedicata = function() {
+            const finestra = document.getElementById('finestraGalleriaDedicata');
+            if (!finestra) return;
+            document.body.classList.remove('overflow-hidden');
+            finestra.classList.add('hidden');
+            finestra.classList.remove('flex');
+        };
+
+        window.switchFinestraGalleria = function(tipo) {
+            finestraTipoAttivo = tipo;
+            sottocategoriaFinestra = 'tutti';
+            document.getElementById('inputCercaFinestra').value = '';
+            aggiornaIntestazioneFinestra();
+            renderizzaFinestraDedicata();
+        };
+
+        function aggiornaIntestazioneFinestra() {
+            const iconaBadge = document.getElementById('finestraIconaBadge');
+            const titolo = document.getElementById('finestraTitolo');
+            const pillola = document.getElementById('finestraPillolaTipo');
+            const sottotitolo = document.getElementById('finestraSottotitolo');
+            const btn3d = document.getElementById('btnSwitch3d');
+            const btnLaser = document.getElementById('btnSwitchLaser');
+            const filtriContainer = document.getElementById('filtriSecondariFinestra');
+
+            if (finestraTipoAttivo === '3d') {
+                iconaBadge.className = 'w-10 h-10 rounded-xl bg-cyan-950 border border-brand-cyan/50 text-brand-cyan flex items-center justify-center text-lg shadow-cyan-glow';
+                iconaBadge.innerHTML = '<i class="fa-solid fa-cube"></i>';
+                titolo.innerText = 'Finestra Lavori Stampa 3D';
+                pillola.innerText = 'Bambu Lab FDM';
+                pillola.className = 'text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full uppercase bg-cyan-950 text-brand-cyan border border-brand-cyan/40';
+                sottotitolo.innerText = 'Prototipi funzionali, ricambi introvabili e materiali tecnici (PLA, PETG, TPU)';
+
+                btn3d.className = 'px-3 py-1.5 rounded-lg transition font-bold flex items-center gap-1.5 bg-brand-cyan text-slate-950 shadow-sm';
+                btnLaser.className = 'px-3 py-1.5 rounded-lg transition font-bold flex items-center gap-1.5 text-slate-400 hover:text-white';
+
+                filtriContainer.innerHTML = `
+                    <button onclick="setSottoFiltroFinestra('tutti', this)" class="btn-sottofiltro px-3 py-1 rounded-lg bg-brand-cyan text-slate-950 font-bold">Tutti i 3D</button>
+                    <button onclick="setSottoFiltroFinestra('ricambi', this)" class="btn-sottofiltro px-3 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white">Solo Ricambi</button>
+                    <button onclick="setSottoFiltroFinestra('PETG', this)" class="btn-sottofiltro px-3 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white">In PETG</button>
+                `;
+            } else {
+                iconaBadge.className = 'w-10 h-10 rounded-xl bg-rose-950 border border-brand-red/50 text-brand-red flex items-center justify-center text-lg shadow-laser';
+                iconaBadge.innerHTML = '<i class="fa-solid fa-bolt"></i>';
+                titolo.innerText = 'Finestra Incisione & Taglio Laser';
+                pillola.innerText = 'Enjoywood 10W Pure Beam';
+                pillola.className = 'text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full uppercase bg-rose-950 text-brand-red border border-brand-red/50';
+                sottotitolo.innerText = 'Incisione fotografica e marcatura a fuoco su ardesia, legno di rovere e pelle naturale';
+
+                btn3d.className = 'px-3 py-1.5 rounded-lg transition font-bold flex items-center gap-1.5 text-slate-400 hover:text-white';
+                btnLaser.className = 'px-3 py-1.5 rounded-lg transition font-bold flex items-center gap-1.5 bg-brand-red text-white shadow-laser';
+
+                filtriContainer.innerHTML = `
+                    <button onclick="setSottoFiltroFinestra('tutti', this)" class="btn-sottofiltro px-3 py-1 rounded-lg bg-brand-red text-white font-bold">Tutte le Incisioni</button>
+                    <button onclick="setSottoFiltroFinestra('Ardesia', this)" class="btn-sottofiltro px-3 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white">Ardesia</button>
+                    <button onclick="setSottoFiltroFinestra('Legno', this)" class="btn-sottofiltro px-3 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white">Legno Pregiato</button>
+                    <button onclick="setSottoFiltroFinestra('Cuoio', this)" class="btn-sottofiltro px-3 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white">Pelle & Cuoio</button>
+                `;
+            }
+        }
+
+        window.setSottoFiltroFinestra = function(filtro, btn) {
+            sottocategoriaFinestra = filtro;
+            document.querySelectorAll('.btn-sottofiltro').forEach(b => {
+                b.className = 'btn-sottofiltro px-3 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white';
+            });
+            const activeClass = finestraTipoAttivo === '3d' ? 'bg-brand-cyan text-slate-950 font-bold' : 'bg-brand-red text-white font-bold';
+            btn.className = `btn-sottofiltro px-3 py-1 rounded-lg ${activeClass}`;
+            renderizzaFinestraDedicata();
+        };
+
+        window.filtraElementiFinestra = function() {
+            renderizzaFinestraDedicata();
+        };
+
+        function renderizzaFinestraDedicata() {
+            const container = document.getElementById('grigliaFinestraDedicata');
+            const vuoto = document.getElementById('vuotoFinestraDedicata');
+            const search = (document.getElementById('inputCercaFinestra')?.value || '').toLowerCase();
+
+            if (!container) return;
+            container.innerHTML = '';
+
+            const filtrati = catalogoLavori.filter(item => {
+                if (item.categoria !== finestraTipoAttivo) return false;
+                
+                // Filtro pillola
+                if (sottocategoriaFinestra !== 'tutti') {
+                    const matchSotto = item.categoriaSecondaria === sottocategoriaFinestra || 
+                                       (item.materiale && item.materiale.toLowerCase().includes(sottocategoriaFinestra.toLowerCase()));
+                    if (!matchSotto) return false;
+                }
+
+                // Ricerca testuale
+                if (search) {
+                    const haystack = (item.titolo + ' ' + item.materiale + ' ' + item.tecnica + ' ' + item.descrizione).toLowerCase();
+                    if (!haystack.includes(search)) return false;
+                }
+
+                return true;
+            });
+
+            if (filtrati.length === 0) {
+                if (vuoto) vuoto.classList.remove('hidden');
+                return;
+            } else {
+                if (vuoto) vuoto.classList.add('hidden');
+            }
+
+            filtrati.forEach(item => {
+                const isLaser = item.categoria === 'laser';
+                const card = document.createElement('div');
+                card.className = `rounded-2xl overflow-hidden group bg-slate-900 border border-slate-800 hover:${isLaser ? 'border-brand-red' : 'border-brand-cyan'} transition-all duration-300 shadow-card flex flex-col justify-between cursor-pointer`;
+                card.onclick = () => window.apriModalLavoro(item);
+
+                const fallbackImg = isLaser 
+                    ? `https://placehold.co/600x600/0f172a/ef233c?text=${encodeURIComponent(item.titolo)}`
+                    : `https://placehold.co/600x600/0f172a/00d2ff?text=${encodeURIComponent(item.titolo)}`;
+
+                card.innerHTML = `
+                    <div class="aspect-square w-full overflow-hidden relative bg-slate-950">
+                        <img src="${item.img}" alt="${item.titolo}" onerror="this.onerror=null; this.src='${fallbackImg}'" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        <span class="absolute top-3 left-3 text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full uppercase ${isLaser ? 'bg-rose-950/90 text-brand-red border border-brand-red/50' : 'bg-cyan-950/90 text-brand-cyan border border-brand-cyan/50'}">
+                            ${isLaser ? 'Enjoywood 10W' : 'Bambu Lab A1'}
+                        </span>
+                    </div>
+                    <div class="p-4 flex flex-col justify-between flex-grow">
+                        <div>
+                            <h4 class="text-white font-display font-bold text-sm mb-1">${item.titolo}</h4>
+                            <p class="text-slate-400 text-xs line-clamp-2 mb-3">${item.descrizione}</p>
+                        </div>
+                        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                            <span><i class="fa-solid fa-layer-group text-[10px] ${isLaser ? 'text-brand-red' : 'text-brand-cyan'}"></i> ${item.materiale.split(' ')[0]}</span>
+                            <span class="${isLaser ? 'text-brand-red' : 'text-brand-cyan'} font-bold">Dettagli &rarr;</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Supporto tastiera ESC per chiudere finestre
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                window.chiudiGalleriaDedicata();
+                window.chiudiModalLavoro();
+            }
+        });
+
+        // Aggiorna conteggi nell'hub principale
+        function aggiornaConteggiHub() {
+            const count3d = catalogoLavori.filter(l => l.categoria === '3d').length;
+            const countLaser = catalogoLavori.filter(l => l.categoria === 'laser').length;
+            const b3d = document.getElementById('badgeCount3dHub');
+            const bLaser = document.getElementById('badgeCountLaserHub');
+            if (b3d) b3d.innerText = `${count3d} Lavorazioni`;
+            if (bLaser) bLaser.innerText = `${countLaser} Lavorazioni`;
+        }
+
+        window.apriModalLavoro = function(item) {
+            const modal = document.getElementById('modalDettaglioLavoro');
+            const isLaser = item.categoria === 'laser';
+            
+            document.getElementById('modalImgLavoro').src = item.img;
+            document.getElementById('modalTitoloLavoro').innerText = item.titolo;
+            document.getElementById('modalDescrizioneLavoro').innerText = item.descrizione;
+            document.getElementById('modalMaterialeLavoro').innerText = item.materiale;
+            document.getElementById('modalTecnicaLavoro').innerText = item.tecnica;
+
+            const badge = document.getElementById('modalBadgeLavoro');
+            badge.innerText = isLaser ? 'Incisione / Taglio Laser' : 'Stampa 3D FDM';
+            badge.className = isLaser 
+                ? "inline-block px-2.5 py-1 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider mb-3 bg-rose-950 text-brand-red border border-brand-red/40"
+                : "inline-block px-2.5 py-1 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider mb-3 bg-cyan-950 text-brand-cyan border border-brand-cyan/40";
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        window.chiudiModalLavoro = function() {
+            const modal = document.getElementById('modalDettaglioLavoro');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
+        // Logica Tool Calcolatore Maker
+        let layerSelezionato = 0.16;
+        window.setLayerTool = function(val, btn) {
+            layerSelezionato = val;
+            document.querySelectorAll('.btn-layer').forEach(b => {
+                b.className = "btn-layer py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:border-brand-red";
+            });
+            btn.className = "btn-layer py-2 rounded-lg bg-brand-red text-white font-bold border border-brand-red";
+            window.calcolaStimaTool();
+        };
+
+        window.calcolaStimaTool = function() {
+            const mat = document.getElementById('toolMateriale').value;
+            const grammi = parseFloat(document.getElementById('toolGrammi').value) || 0;
+            
+            // Densità medie (g/cm3)
+            const densita = mat === 'PLA' ? 1.24 : (mat === 'PETG' ? 1.27 : 1.21);
+            // Volume = massa / densita. Diametro filo = 1.75 mm -> Area sezione = PI * (0.175/2)^2 cm2 = ~0.02405 cm2
+            const volumeCm3 = grammi / densita;
+            const lunghezzaMetri = volumeCm3 / 0.02405 / 100;
+
+            document.getElementById('risultatoMetri').innerText = `~${lunghezzaMetri.toFixed(1)} m (${mat})`;
+            
+            const finituraEl = document.getElementById('risultatoFinitura');
+            if (layerSelezionato <= 0.12) {
+                finituraEl.innerText = "Ultra Fine (Dettagli minimi visibili)";
+                finituraEl.className = "font-mono font-bold text-amber-400";
+            } else if (layerSelezionato <= 0.16) {
+                finituraEl.innerText = "Equilibrata (Robusta & Pulita)";
+                finituraEl.className = "font-mono font-bold text-brand-cyan";
+            } else {
+                finituraEl.innerText = "Rapida (Massima resistenza meccanica)";
+                finituraEl.className = "font-mono font-bold text-slate-200";
+            }
+
+            const idoneitaEl = document.getElementById('risultatoIdoneita');
+            if (mat === 'PETG') {
+                idoneitaEl.innerText = "Elevata (Resiste a urti e 75°C)";
+                idoneitaEl.className = "font-mono font-bold text-emerald-400";
+            } else if (mat === 'TPU') {
+                idoneitaEl.innerText = "Flessibile & Ammortizzante";
+                idoneitaEl.className = "font-mono font-bold text-purple-400";
+            } else {
+                idoneitaEl.innerText = "Ottima per interni ed estetica";
+                idoneitaEl.className = "font-mono font-bold text-sky-400";
+            }
+        };
+
+        window.copiaDatiToolPerPreventivo = function() {
+            const mat = document.getElementById('toolMateriale').value;
+            const grammi = document.getElementById('toolGrammi').value;
+            const testo = `Ciao Mauro, vorrei una stima per un pezzo in ${mat} (~${grammi}g con layer ${layerSelezionato}mm).`;
+            
+            const mailto = `mailto:info@mlaser.it?subject=Richiesta%20Stima%20Pezzo%20${mat}&body=${encodeURIComponent(testo)}`;
+            const btn = document.getElementById('btnCopiaTesto');
+            btn.innerText = "Apertura email in corso...";
+            setTimeout(() => {
+                btn.innerText = "Invia questi dati a Mauro";
+                window.location.href = mailto;
+            }, 500);
+        };
+
+        // Connessione in tempo reale a Firebase Firestore per le foto
+        async function sincronizzaConFirebase() {
+            const badge = document.getElementById('badgeCloudSync');
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'mlaser-website';
+
+            if (typeof __firebase_config === 'undefined') {
+                if (badge) {
+                    badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-brand-red"></span> Archivio MLaser`;
+                    badge.className = "ml-2 inline-flex items-center gap-1 text-[10px] text-brand-red bg-rose-950/60 border border-brand-red/50 px-2 py-0.5 rounded-full";
+                }
+                aggiornaConteggiHub();
+                return;
+            }
+
+            try {
+                const firebaseConfig = JSON.parse(__firebase_config);
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                const db = getFirestore(app);
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                const publicLavoriCol = collection(db, 'artifacts', appId, 'public', 'data', 'lavori');
+                onSnapshot(publicLavoriCol, (snapshot) => {
+                    if (!snapshot.empty) {
+                        const items = [];
+                        snapshot.forEach(docSnap => {
+                            const data = docSnap.data();
+                            items.push({
+                                id: docSnap.id,
+                                titolo: data.titolo || "Lavoro MLaser",
+                                categoria: data.categoria || "3d",
+                                categoriaSecondaria: data.categoriaSecondaria || null,
+                                materiale: data.materiale || "Materiale standard",
+                                tecnica: data.tecnica || "Lavorazione artigianale",
+                                descrizione: data.descrizione || "",
+                                img: data.img || "https://placehold.co/600x600/0f172a/ef233c?text=MLaser+Cloud"
+                            });
+                        });
+                        catalogoLavori = items;
+                        aggiornaConteggiHub();
+                    }
+                }, (err) => {
+                    console.warn("Lettura Firestore offline/locale:", err);
+                });
+            } catch (e) {
+                console.warn("Fallback catalogo locale:", e);
+            }
+            aggiornaConteggiHub();
+        }
+
+        // Inizializzazione automatica
+        sincronizzaConFirebase();
+        window.calcolaStimaTool();
+        aggiornaConteggiHub();
+    </script>
+</body>
+</html>
